@@ -59,7 +59,7 @@ async function loadCircles() {
     needsVerification ? unverified++ : verified++;
     L.marker([circle.lat, circle.lng], { icon: makeIcon(needsVerification) })
       .bindPopup(popupHtml(circle), {
-        maxWidth: 340,
+        maxWidth: 300,
         maxHeight: 280,
         autoPan: true,
         autoPanPaddingTopLeft: [24, 24],
