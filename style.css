@@ -111,6 +111,8 @@ main { position: relative; }
 .popup p { line-height: 1.65; margin: 8px 0; }
 .popup .description {
   color: #394d48;
+  font-size: 15px;
+  line-height: 1.6;
   max-height: 140px;
   overflow-y: auto;
   padding-right: 4px;
