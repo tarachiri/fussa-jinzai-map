@@ -109,7 +109,12 @@ main { position: relative; }
 .popup { min-width: 220px; }
 .popup h2 { color: var(--ink); font-size: 1.05rem; line-height: 1.45; margin: 0 0 10px; }
 .popup p { line-height: 1.65; margin: 8px 0; }
-.popup .description { color: #394d48; max-height: 180px; overflow: auto; }
+.popup .description {
+  color: #394d48;
+  max-height: 140px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
 .popup .notice { background: #fff3dc; border-left: 3px solid var(--unverified); color: #744615; font-size: .78rem; padding: 7px 9px; }
 .tags { display: flex; flex-wrap: wrap; gap: 5px; }
 .tag { background: #e8f2ed; border-radius: 999px; color: #245746; font-size: .74rem; padding: 4px 8px; }

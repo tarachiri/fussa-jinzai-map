@@ -1,13 +1,14 @@
 const FUSSA_CENTER = [35.7385, 139.3270];
 
-const map = L.map("map", { zoomControl: true }).setView(FUSSA_CENTER, 13);
+const map = L.map("map", { zoomControl: false }).setView(FUSSA_CENTER, 13);
+L.control.zoom({ position: "topright" }).addTo(map);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
   attribution: "© OpenStreetMap contributors"
 }).addTo(map);
 
 const markers = L.markerClusterGroup({
-  maxClusterRadius: 34,
+  maxClusterRadius: 20,
   showCoverageOnHover: false,
   disableClusteringAtZoom: 16
 });
@@ -57,7 +58,13 @@ async function loadCircles() {
     const needsVerification = Number(circle.needs_verification) === 1;
     needsVerification ? unverified++ : verified++;
     L.marker([circle.lat, circle.lng], { icon: makeIcon(needsVerification) })
-      .bindPopup(popupHtml(circle), { maxWidth: 340 })
+      .bindPopup(popupHtml(circle), {
+        maxWidth: 340,
+        maxHeight: 280,
+        autoPan: true,
+        autoPanPaddingTopLeft: [24, 24],
+        autoPanPaddingBottomRight: [24, 24]
+      })
       .addTo(markers);
     bounds.push([circle.lat, circle.lng]);
   });
