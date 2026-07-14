@@ -16,6 +16,13 @@ python3 scripts/generate_circles_json.py \
 出力対象は`circles.is_hidden=0`かつ座標ありの団体だけです。電話、メール、
 代表者名、raw_fields、連絡先公開状態はJSONへ出力しません。
 
+## データ更新運用
+
+`circles.json`はGitHub Pagesが直接配信する静的ファイルです。DB更新は自動反映されません。
+データ更新時はtyoで生成スクリプトを再実行し、出力をリポジトリ直下の
+`circles.json`へ置き換えて、件数と公開フィールドを確認後に再コミットします。
+cron等の自動更新は現時点では行いません。
+
 ## ローカル確認
 
 ```bash
