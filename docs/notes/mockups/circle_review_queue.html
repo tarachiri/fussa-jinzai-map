@@ -13,10 +13,14 @@
     --warn-soft: #fff3dc;
     --danger: #b3261e;
     --danger-soft: #fdeceb;
+    --warn-solid: #a15c12;
+    /* 登録元バッジは白文字の固定塗りつぶしなので、元サイトの緑／橙を基調にした
+       濃色・低彩度のセットで統一する。ダークモードでも同じ値を使い続けることで、
+       白文字とのコントラストを常に確保する（テーマごとに明るく振らない）。 */
     --org-kagayaki: #19765e;
-    --org-fvac: #2f6fb0;
+    --org-fvac: #2b6b73;
     --org-kominkan: #b9660f;
-    --org-shakyoiku: #7a4fb0;
+    --org-shakyoiku: #7a4a5e;
     --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
     --sans: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
   }
@@ -26,7 +30,6 @@
     --accent: #4fd3a8; --accent-soft: rgba(79,211,168,.14);
     --warn: #f2a34d; --warn-soft: rgba(242,163,77,.14);
     --danger: #ff8a80; --danger-soft: rgba(255,138,128,.14);
-    --org-kagayaki: #4fd3a8; --org-fvac: #7fb6e8; --org-kominkan: #f2a34d; --org-shakyoiku: #c7a6f2;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -35,7 +38,6 @@
       --accent: #4fd3a8; --accent-soft: rgba(79,211,168,.14);
       --warn: #f2a34d; --warn-soft: rgba(242,163,77,.14);
       --danger: #ff8a80; --danger-soft: rgba(255,138,128,.14);
-      --org-kagayaki: #4fd3a8; --org-fvac: #7fb6e8; --org-kominkan: #f2a34d; --org-shakyoiku: #c7a6f2;
     }
   }
 
@@ -127,7 +129,7 @@
   button.primary { background: var(--accent); color: var(--card); border: none; border-radius: 9px; padding: 10px 18px; font-size: .85rem; font-weight: 700; cursor: pointer; }
   button.secondary { background: none; color: var(--muted); border: 1px solid var(--line); border-radius: 9px; padding: 10px 16px; font-size: .85rem; font-weight: 600; cursor: pointer; }
   button.danger { background: none; color: var(--danger); border: 1px solid var(--danger); border-radius: 9px; padding: 10px 16px; font-size: .85rem; font-weight: 600; cursor: pointer; }
-  button.merge { background: var(--warn); color: #fff; border: none; border-radius: 9px; padding: 10px 18px; font-size: .85rem; font-weight: 700; cursor: not-allowed; opacity: .5; }
+  button.merge { background: var(--warn-solid); color: #fff; border: none; border-radius: 9px; padding: 10px 18px; font-size: .85rem; font-weight: 700; cursor: not-allowed; opacity: .5; }
   button.merge.enabled { cursor: pointer; opacity: 1; }
   button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 
