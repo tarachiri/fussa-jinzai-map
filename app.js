@@ -1,6 +1,16 @@
 const FUSSA_CENTER = [35.7385, 139.3270];
 
-const map = L.map("map", { zoomControl: false }).setView(FUSSA_CENTER, 13);
+const map = L.map("map", {
+  zoomControl: false,
+  gestureHandling: true,
+  gestureHandlingOptions: {
+    text: {
+      touch: "2本の指で地図を操作してください",
+      scroll: "Ctrlキーを押しながらスクロールすると地図を拡大縮小できます",
+      scrollMac: "⌘キーを押しながらスクロールすると地図を拡大縮小できます"
+    }
+  }
+}).setView(FUSSA_CENTER, 13);
 L.control.zoom({ position: "topright" }).addTo(map);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
