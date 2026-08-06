@@ -1,0 +1,337 @@
+<title>登録レビュー・重複突き合わせ画面（案）— 福生市人材資源マップ</title>
+<style>
+  :root {
+    --paper: #f6f2e8;
+    --card: #fffdf8;
+    --card-raised: #ffffff;
+    --ink: #18322d;
+    --muted: #5d716c;
+    --line: #d9ded8;
+    --accent: #19765e;
+    --accent-soft: #e8f2ed;
+    --warn: #b9660f;
+    --warn-soft: #fff3dc;
+    --danger: #b3261e;
+    --danger-soft: #fdeceb;
+    --org-kagayaki: #19765e;
+    --org-fvac: #2f6fb0;
+    --org-kominkan: #b9660f;
+    --org-shakyoiku: #7a4fb0;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+  }
+  :root[data-theme="dark"] {
+    --paper: #0f1f1c; --card: #16302a; --card-raised: #1b3830;
+    --ink: #eaf1ee; --muted: #9fb3ad; --line: rgba(234,241,238,.14);
+    --accent: #4fd3a8; --accent-soft: rgba(79,211,168,.14);
+    --warn: #f2a34d; --warn-soft: rgba(242,163,77,.14);
+    --danger: #ff8a80; --danger-soft: rgba(255,138,128,.14);
+    --org-kagayaki: #4fd3a8; --org-fvac: #7fb6e8; --org-kominkan: #f2a34d; --org-shakyoiku: #c7a6f2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #0f1f1c; --card: #16302a; --card-raised: #1b3830;
+      --ink: #eaf1ee; --muted: #9fb3ad; --line: rgba(234,241,238,.14);
+      --accent: #4fd3a8; --accent-soft: rgba(79,211,168,.14);
+      --warn: #f2a34d; --warn-soft: rgba(242,163,77,.14);
+      --danger: #ff8a80; --danger-soft: rgba(255,138,128,.14);
+      --org-kagayaki: #4fd3a8; --org-fvac: #7fb6e8; --org-kominkan: #f2a34d; --org-shakyoiku: #c7a6f2;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); line-height: 1.55; }
+  .shell { max-width: 1240px; margin: 0 auto; padding: 22px clamp(14px, 3vw, 36px) 60px; }
+
+  .topbar {
+    display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-end; justify-content: space-between;
+    border-bottom: 1px solid var(--line); padding-bottom: 18px; margin-bottom: 20px;
+  }
+  .eyebrow { font-family: var(--mono); font-size: .68rem; font-weight: 600; letter-spacing: .16em; color: var(--accent); margin: 0 0 6px; }
+  .topbar h1 { font-size: clamp(1.25rem, 2.4vw, 1.6rem); margin: 0 0 4px; text-wrap: balance; }
+  .topbar .sub { color: var(--muted); font-size: .85rem; margin: 0; max-width: 58ch; }
+  .approver {
+    font-size: .78rem; color: var(--muted); text-align: right;
+  }
+  .approver strong { color: var(--ink); display: block; font-size: .92rem; }
+
+  .board { display: grid; grid-template-columns: 380px minmax(0, 1fr); gap: 18px; align-items: start; }
+  @media (max-width: 920px) { .board { grid-template-columns: 1fr; } }
+
+  /* ---------- list ---------- */
+  .filters { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+  .filter-chip {
+    font-size: .78rem; font-weight: 600; padding: 7px 12px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--card); color: var(--muted); cursor: pointer;
+  }
+  .filter-chip .n { font-family: var(--mono); opacity: .75; margin-left: 3px; }
+  .filter-chip.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  @media (prefers-color-scheme: dark) { .filter-chip.active { background: var(--accent); color: #0b1a17; border-color: var(--accent); } }
+  :root[data-theme="dark"] .filter-chip.active { background: var(--accent); color: #0b1a17; border-color: var(--accent); }
+
+  .queue-list { display: flex; flex-direction: column; gap: 8px; }
+  .queue-item {
+    text-align: left; width: 100%; cursor: pointer;
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 12px 14px; display: flex; flex-direction: column; gap: 6px;
+  }
+  .queue-item.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .queue-item-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .queue-name { font-weight: 700; font-size: .92rem; }
+  .queue-meta { font-size: .72rem; color: var(--muted); font-family: var(--mono); }
+  .status-chip { font-size: .68rem; font-weight: 700; border-radius: 6px; padding: 2px 7px; white-space: nowrap; }
+  .status-chip.pending { background: var(--warn-soft); color: var(--warn); }
+  .status-chip.returned { background: var(--danger-soft); color: var(--danger); }
+  .status-chip.approved { background: var(--accent-soft); color: var(--accent); }
+  .org-badge {
+    font-size: .68rem; font-weight: 700; border-radius: 6px; padding: 2px 7px; color: #fff; display: inline-block;
+  }
+  .dup-flag { font-size: .72rem; color: var(--warn); }
+
+  /* ---------- detail ---------- */
+  .detail-card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px 22px;
+  }
+  .detail-head { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 4px; }
+  .detail-head h2 { font-size: 1.15rem; margin: 0 0 6px; }
+  .detail-badges { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 4px; }
+  .detail-meta { font-size: .78rem; color: var(--muted); font-family: var(--mono); }
+
+  .detail-section { margin-top: 20px; }
+  .detail-section h3 {
+    font-size: .78rem; text-transform: uppercase; letter-spacing: .07em; color: var(--muted);
+    margin: 0 0 10px; font-weight: 700;
+  }
+  dl.rawlist { display: grid; grid-template-columns: 120px 1fr; gap: 8px 14px; margin: 0; font-size: .87rem; }
+  dl.rawlist dt { color: var(--muted); }
+  dl.rawlist dd { margin: 0; }
+  .tag-mini { background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 2px 9px; font-size: .74rem; margin: 0 5px 4px 0; display: inline-block; }
+
+  .disclosure-banner {
+    display: flex; gap: 10px; align-items: flex-start; background: var(--warn-soft); border-left: 3px solid var(--warn);
+    border-radius: 8px; padding: 10px 13px; font-size: .82rem; color: var(--ink); margin-bottom: 10px;
+  }
+
+  .candidate-card {
+    border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; background: var(--card-raised);
+  }
+  .candidate-top { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+  .candidate-name { font-weight: 700; }
+  .candidate-meta { font-size: .74rem; color: var(--muted); font-family: var(--mono); }
+  .candidate-desc { font-size: .82rem; color: var(--muted); margin: 6px 0 10px; }
+  .confirm-row { display: flex; align-items: flex-start; gap: 8px; font-size: .8rem; }
+  .confirm-row input { margin-top: 3px; }
+  .no-candidate { font-size: .84rem; color: var(--muted); background: var(--card-raised); border: 1px dashed var(--line); border-radius: 10px; padding: 12px 14px; }
+
+  .action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+  button.primary { background: var(--accent); color: var(--card); border: none; border-radius: 9px; padding: 10px 18px; font-size: .85rem; font-weight: 700; cursor: pointer; }
+  button.secondary { background: none; color: var(--muted); border: 1px solid var(--line); border-radius: 9px; padding: 10px 16px; font-size: .85rem; font-weight: 600; cursor: pointer; }
+  button.danger { background: none; color: var(--danger); border: 1px solid var(--danger); border-radius: 9px; padding: 10px 16px; font-size: .85rem; font-weight: 600; cursor: pointer; }
+  button.merge { background: var(--warn); color: #fff; border: none; border-radius: 9px; padding: 10px 18px; font-size: .85rem; font-weight: 700; cursor: not-allowed; opacity: .5; }
+  button.merge.enabled { cursor: pointer; opacity: 1; }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  .return-field { margin-top: 12px; display: none; }
+  .return-field.open { display: block; }
+  .return-field textarea {
+    width: 100%; font: inherit; font-size: .85rem; border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px;
+    background: var(--card-raised); color: var(--ink); min-height: 60px; resize: vertical;
+  }
+
+  .foot-note { font-size: .74rem; color: var(--muted); text-align: center; margin-top: 26px; }
+  .foot-note code { font-family: var(--mono); background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; }
+</style>
+
+<div class="shell">
+  <div class="topbar">
+    <div>
+      <p class="eyebrow">APPROVAL QUEUE · raw → circles 正規化</p>
+      <h1>登録レビュー・重複突き合わせ</h1>
+      <p class="sub">登録画面には正規化ロジックを混在させない方針のため、raw_circle_submissions の承認・circlesへの反映はこの画面でのみ行います。</p>
+    </div>
+    <div class="approver">
+      <strong>まじまじ</strong>
+      承認者（当面ひとり）
+    </div>
+  </div>
+
+  <div class="board">
+    <div>
+      <div class="filters" id="filters">
+        <button class="filter-chip active" data-filter="all" type="button">すべて<span class="n">3</span></button>
+        <button class="filter-chip" data-filter="pending" type="button">未処理<span class="n">2</span></button>
+        <button class="filter-chip" data-filter="returned" type="button">差し戻し<span class="n">1</span></button>
+        <button class="filter-chip" data-filter="approved" type="button">正規化済み<span class="n">0</span></button>
+      </div>
+      <div class="queue-list" id="queue-list"></div>
+    </div>
+
+    <div class="detail-card" id="detail"></div>
+  </div>
+
+  <p class="foot-note">この画面の承認操作は、反映前に <code>dry-run</code> で件数・差分を確認してから本番の <code>circles</code> テーブルへ適用する運用を想定しています。</p>
+</div>
+
+<script>
+  var SUBMISSIONS = [
+    {
+      id: 214, status: 'pending', name: 'さくら音訳の会', org: 'kagayaki', orgLabel: '輝き',
+      sourceNo: '042', sourceDetail: '輝き団体名簿2026年版 p.18',
+      submittedBy: '田中', submittedAt: '2026-08-05 14:20',
+      description: '視覚障がい者向けの音訳（本や広報紙の音声化）ボランティア。月2回、中央公民館で編集・録音作業を行う。',
+      categories: ['保健・医療・福祉'], fee: '年額1,000円', joinCondition: '見学後に相談',
+      contact: { rep: '—', tel: '—', mail: '—', disclosure: '未確認（undisclosed）' },
+      facility: 'さくら会館（facility #12）', schedule: '第2・第4水曜日 10:00〜12:00（中央公民館）',
+      note: '',
+      candidates: [
+        { id: 71, name: '音訳ボランティアさくら', org: '公民館(本館)', desc: '視覚障がい者向け音訳活動。第2・4水曜開催。' }
+      ]
+    },
+    {
+      id: 211, status: 'returned', name: 'ふっさウォーキングの会', org: 'kagayaki', orgLabel: '輝き',
+      sourceNo: '039', sourceDetail: '輝き団体名簿2026年版 p.11',
+      submittedBy: '佐藤', submittedAt: '2026-08-04 10:05',
+      description: '市内を歩く健康ウォーキングサークル。季節ごとにコースを変えて活動。',
+      categories: ['保健・医療・福祉'], fee: 'なし', joinCondition: '特になし',
+      contact: { rep: '—', tel: '—', mail: '—', disclosure: '未確認（undisclosed）' },
+      facility: '（未記入）', schedule: '毎月第1日曜日 集合場所は当日案内',
+      note: '差し戻し理由：活動場所（施設名）の記載がなく、施設ピンに紐づけられません。集合場所の確認をお願いします。',
+      candidates: []
+    },
+    {
+      id: 219, status: 'pending', name: 'はつらつ体操クラブ', org: 'fvac', orgLabel: 'FVAC',
+      sourceNo: '—', sourceDetail: 'FVAC登録団体一覧ページ',
+      submittedBy: '田中', submittedAt: '2026-08-06 09:40',
+      description: '高齢者向けの軽体操。椅子に座ったままできるプログラム中心。',
+      categories: ['01 保健、医療又は福祉の増進'], fee: '1回300円', joinCondition: 'なし',
+      contact: { rep: '—', tel: '—', mail: '—', disclosure: '未確認（undisclosed）' },
+      facility: '福祉センター（facility #05）', schedule: '毎週金曜日 13:30〜14:30',
+      note: '',
+      candidates: [
+        { id: 94, name: 'はつらつ健康体操の会', org: '社会教育', desc: '高齢者向け軽体操。金曜開催、福祉センター利用。' }
+      ]
+    }
+  ];
+
+  var ORG_COLOR = { kagayaki: 'var(--org-kagayaki)', fvac: 'var(--org-fvac)', kominkan: 'var(--org-kominkan)', shakyoiku: 'var(--org-shakyoiku)' };
+  var STATUS_LABEL = { pending: ['pending', '未処理'], returned: ['returned', '差し戻し中'], approved: ['approved', '正規化済み'] };
+
+  var state = { filter: 'all', selected: SUBMISSIONS[0].id };
+
+  function renderList() {
+    var list = document.getElementById('queue-list');
+    var items = SUBMISSIONS.filter(function (s) { return state.filter === 'all' || s.status === state.filter; });
+    list.innerHTML = items.map(function (s) {
+      var st = STATUS_LABEL[s.status];
+      return '<button class="queue-item' + (s.id === state.selected ? ' selected' : '') + '" data-id="' + s.id + '" type="button">' +
+        '<div class="queue-item-top">' +
+          '<span class="queue-name">' + s.name + '</span>' +
+          '<span class="status-chip ' + st[0] + '">' + st[1] + '</span>' +
+        '</div>' +
+        '<div class="queue-item-top">' +
+          '<span class="org-badge" style="background:' + ORG_COLOR[s.org] + '">' + s.orgLabel + '</span>' +
+          '<span class="queue-meta">#' + s.id + ' · ' + s.submittedAt + '</span>' +
+        '</div>' +
+        (s.candidates.length ? '<div class="dup-flag">⚠ 類似候補 ' + s.candidates.length + ' 件</div>' : '') +
+      '</button>';
+    }).join('') || '<p class="no-candidate">該当する登録はありません。</p>';
+
+    list.querySelectorAll('.queue-item').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        state.selected = Number(btn.dataset.id);
+        renderList();
+        renderDetail();
+      });
+    });
+  }
+
+  function renderDetail() {
+    var s = SUBMISSIONS.find(function (x) { return x.id === state.selected; });
+    var el = document.getElementById('detail');
+    if (!s) { el.innerHTML = '<p class="no-candidate">左の一覧から登録を選択してください。</p>'; return; }
+    var st = STATUS_LABEL[s.status];
+
+    var candidatesHtml = s.candidates.length ? s.candidates.map(function (c, i) {
+      var cbId = 'confirm-' + s.id + '-' + i;
+      return '<div class="candidate-card">' +
+        '<div class="candidate-top"><span class="candidate-name">' + c.name + '</span><span class="candidate-meta">circle #' + c.id + ' ・ ' + c.org + '</span></div>' +
+        '<p class="candidate-desc">' + c.desc + '</p>' +
+        '<label class="confirm-row"><input type="checkbox" class="confirm-check" id="' + cbId + '" data-cid="' + c.id + '" />' +
+          '<span>団体の代表者・関係者本人から「' + c.name + '（#' + c.id + '）と同一団体である」旨の申告を確認した</span></label>' +
+      '</div>';
+    }).join('') : '<p class="no-candidate">名称・活動内容が近い既存団体は見つかりませんでした。</p>';
+    // 「統合」＝レコードを1つに合体させるのではなく、新規circleを作成した上で
+    // same_as_circle_id に候補circleのIDをセットして紐づける（名寄せしない方針を維持）。
+
+    el.innerHTML =
+      '<div class="detail-head">' +
+        '<div>' +
+          '<div class="detail-badges">' +
+            '<span class="org-badge" style="background:' + ORG_COLOR[s.org] + '">' + s.orgLabel + '</span>' +
+            '<span class="status-chip ' + st[0] + '">' + st[1] + '</span>' +
+          '</div>' +
+          '<h2>' + s.name + '</h2>' +
+          '<div class="detail-meta">submission #' + s.id + ' ・ 出典番号 ' + s.sourceNo + ' ・ ' + s.sourceDetail + '</div>' +
+          '<div class="detail-meta">提出: ' + s.submittedBy + ' ・ ' + s.submittedAt + '</div>' +
+        '</div>' +
+      '</div>' +
+
+      (s.note ? '<div class="disclosure-banner" style="margin-top:14px;"><span>💬</span><span>' + s.note + '</span></div>' : '') +
+
+      '<div class="detail-section"><h3>基本情報</h3><dl class="rawlist">' +
+        '<dt>活動内容</dt><dd>' + s.description + '</dd>' +
+        '<dt>会費</dt><dd>' + s.fee + '</dd>' +
+        '<dt>入会条件</dt><dd>' + s.joinCondition + '</dd>' +
+        '<dt>カテゴリ</dt><dd>' + s.categories.map(function (c) { return '<span class="tag-mini">' + c + '</span>'; }).join('') + '</dd>' +
+      '</dl></div>' +
+
+      '<div class="detail-section"><h3>連絡先（生データ・非公開）</h3>' +
+        '<div class="disclosure-banner"><span>⚠</span><span>公開確認が取れるまで、正規化後も地図・プチHPには表示されません。</span></div>' +
+        '<dl class="rawlist">' +
+          '<dt>代表者</dt><dd>' + s.contact.rep + '</dd>' +
+          '<dt>電話</dt><dd>' + s.contact.tel + '</dd>' +
+          '<dt>メール</dt><dd>' + s.contact.mail + '</dd>' +
+          '<dt>公開確認状況</dt><dd>' + s.contact.disclosure + '</dd>' +
+        '</dl></div>' +
+
+      '<div class="detail-section"><h3>活動場所・日時</h3><dl class="rawlist">' +
+        '<dt>施設</dt><dd>' + s.facility + '</dd>' +
+        '<dt>元の記述</dt><dd style="font-family:var(--mono); font-size:.85rem;">' + s.schedule + '</dd>' +
+      '</dl></div>' +
+
+      '<div class="detail-section"><h3>類似候補（自動では紐づけません）</h3>' + candidatesHtml + '</div>' +
+
+      '<div class="return-field" id="return-field"><textarea placeholder="差し戻し理由・確認してほしい項目を記入"></textarea></div>' +
+
+      '<div class="action-row">' +
+        '<button class="secondary" id="btn-return" type="button">差し戻す</button>' +
+        '<button class="primary" id="btn-new" type="button">新規circleとして正規化する</button>' +
+        '<button class="merge' + '" id="btn-merge" type="button" disabled>新規circleを作成し、候補へsame_as_circle_idでリンクする</button>' +
+      '</div>';
+
+    document.getElementById('btn-return').addEventListener('click', function () {
+      document.getElementById('return-field').classList.toggle('open');
+    });
+
+    var mergeBtn = document.getElementById('btn-merge');
+    el.querySelectorAll('.confirm-check').forEach(function (cb) {
+      cb.addEventListener('change', function () {
+        var anyChecked = Array.from(el.querySelectorAll('.confirm-check')).some(function (c) { return c.checked; });
+        mergeBtn.disabled = !anyChecked;
+        mergeBtn.classList.toggle('enabled', anyChecked);
+      });
+    });
+  }
+
+  document.querySelectorAll('#filters .filter-chip').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('#filters .filter-chip').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      state.filter = btn.dataset.filter;
+      renderList();
+    });
+  });
+
+  renderList();
+  renderDetail();
+</script>

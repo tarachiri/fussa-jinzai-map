@@ -1,0 +1,613 @@
+<title>団体情報 登録画面（第2稿）— 福生市人材資源マップ</title>
+<style>
+  :root {
+    --paper: #f6f2e8;
+    --card: #fffdf8;
+    --card-raised: #ffffff;
+    --ink: #18322d;
+    --muted: #5d716c;
+    --line: #d9ded8;
+    --accent: #19765e;
+    --accent-soft: #e8f2ed;
+    --warn: #b9660f;
+    --warn-soft: #fff3dc;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #0f1f1c;
+    --card: #16302a;
+    --card-raised: #1b3830;
+    --ink: #eaf1ee;
+    --muted: #9fb3ad;
+    --line: rgba(234, 241, 238, .14);
+    --accent: #4fd3a8;
+    --accent-soft: rgba(79, 211, 168, .14);
+    --warn: #f2a34d;
+    --warn-soft: rgba(242, 163, 77, .14);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #0f1f1c;
+      --card: #16302a;
+      --card-raised: #1b3830;
+      --ink: #eaf1ee;
+      --muted: #9fb3ad;
+      --line: rgba(234, 241, 238, .14);
+      --accent: #4fd3a8;
+      --accent-soft: rgba(79, 211, 168, .14);
+      --warn: #f2a34d;
+      --warn-soft: rgba(242, 163, 77, .14);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.55;
+  }
+
+  .shell { max-width: 1180px; margin: 0 auto; padding: 22px clamp(14px, 3vw, 36px) 60px; }
+
+  /* ---------- header ---------- */
+  .topbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    align-items: flex-end;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 18px;
+    margin-bottom: 22px;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: .68rem;
+    font-weight: 600;
+    letter-spacing: .16em;
+    color: var(--accent);
+    margin: 0 0 6px;
+  }
+  .topbar h1 { font-size: clamp(1.3rem, 2.6vw, 1.7rem); margin: 0 0 4px; text-wrap: balance; }
+  .topbar .sub { color: var(--muted); font-size: .86rem; margin: 0; }
+
+  .source-picker { display: flex; gap: 6px; flex-wrap: wrap; }
+  .source-chip {
+    font-size: .78rem;
+    font-weight: 600;
+    padding: 7px 13px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .source-chip.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  @media (prefers-color-scheme: dark) { .source-chip.active { background: var(--accent); color: #0b1a17; border-color: var(--accent); } }
+  :root[data-theme="dark"] .source-chip.active { background: var(--accent); color: #0b1a17; border-color: var(--accent); }
+
+  /* ---------- layout ---------- */
+  .workbench {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 20px;
+    align-items: start;
+  }
+  @media (max-width: 880px) {
+    .workbench { grid-template-columns: 1fr; }
+    .rail { position: static !important; order: -1; }
+  }
+
+  .form-col { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+
+  section.card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px 20px 20px;
+  }
+  section.card h2 {
+    font-size: .95rem;
+    margin: 0 0 3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .step-no {
+    font-family: var(--mono);
+    font-size: .72rem;
+    color: var(--muted);
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 6px;
+    padding: 2px 7px;
+  }
+  section.card .hint { color: var(--muted); font-size: .78rem; margin: 0 0 14px; }
+
+  .field-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .field { display: flex; flex-direction: column; gap: 5px; flex: 1 1 200px; margin-bottom: 12px; }
+  .field.narrow { flex: 0 1 160px; }
+  .field label { font-size: .78rem; font-weight: 600; color: var(--ink); }
+  .field label .req { color: var(--warn); margin-left: 3px; }
+  .field label .optional { color: var(--muted); font-weight: 400; font-size: .72rem; }
+  .field input[type="text"],
+  .field input[type="time"],
+  .field textarea,
+  .field select {
+    font: inherit;
+    font-size: .88rem;
+    color: var(--ink);
+    background: var(--card-raised);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 9px 11px;
+    width: 100%;
+  }
+  .field textarea { resize: vertical; min-height: 64px; font-family: var(--sans); }
+  .field .raw-text { font-family: var(--mono); font-size: .82rem; }
+  .field input:focus, .field textarea:focus, .field select:focus,
+  button:focus-visible, .source-chip:focus-visible, .chip:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  .chip-field { display: flex; flex-wrap: wrap; gap: 7px; }
+  .chip {
+    font-size: .8rem;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--card-raised);
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .chip.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+
+  .weekday-field { display: flex; gap: 6px; }
+  .weekday {
+    width: 34px; height: 34px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px; border: 1px solid var(--line);
+    background: var(--card-raised); color: var(--muted);
+    font-size: .82rem; cursor: pointer;
+  }
+  .weekday.on { background: var(--accent); border-color: var(--accent); color: var(--card); font-weight: 700; }
+
+  .add-schedule {
+    background: none; border: 1px dashed var(--line); color: var(--accent);
+    border-radius: 8px; padding: 9px; font-size: .82rem; font-weight: 600;
+    cursor: pointer; width: 100%; margin-top: 2px;
+  }
+
+  .disclosure-banner {
+    display: flex; gap: 10px; align-items: flex-start;
+    background: var(--warn-soft); border-left: 3px solid var(--warn);
+    border-radius: 8px; padding: 10px 13px; margin-bottom: 14px;
+    font-size: .82rem; color: var(--ink);
+  }
+  .disclosure-banner strong { color: var(--warn); }
+
+  .facility-suggest {
+    border: 1px solid var(--line); border-radius: 8px; background: var(--card-raised);
+    padding: 6px; display: flex; flex-direction: column; gap: 2px; margin-top: -4px; margin-bottom: 12px;
+  }
+  .facility-suggest button {
+    all: unset; cursor: pointer; padding: 7px 9px; border-radius: 6px; font-size: .82rem;
+    display: flex; justify-content: space-between; gap: 8px;
+  }
+  .facility-suggest button:hover { background: var(--accent-soft); }
+  .facility-suggest .tag { color: var(--muted); font-family: var(--mono); font-size: .7rem; }
+
+  /* ---------- right rail ---------- */
+  .rail { position: sticky; top: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .rail-card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 16px 18px;
+  }
+  .rail-card h3 {
+    font-size: .78rem; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--muted); margin: 0 0 10px; font-weight: 700;
+  }
+  .raw-json {
+    font-family: var(--mono); font-size: .74rem; line-height: 1.65;
+    background: var(--card-raised); border: 1px solid var(--line); border-radius: 10px;
+    padding: 12px; max-height: 320px; overflow: auto; white-space: pre; color: var(--ink);
+  }
+  .raw-json .k { color: var(--accent); }
+  .raw-json .s { color: var(--warn); }
+  .rail-note { font-size: .74rem; color: var(--muted); margin: 10px 0 0; }
+
+  .dup-item {
+    display: flex; justify-content: space-between; gap: 8px; align-items: center;
+    padding: 8px 0; border-top: 1px solid var(--line); font-size: .82rem;
+  }
+  .dup-item:first-of-type { border-top: none; padding-top: 0; }
+  .dup-name { font-weight: 600; }
+  .dup-meta { color: var(--muted); font-size: .72rem; font-family: var(--mono); }
+  .dup-badge {
+    font-size: .68rem; font-family: var(--mono); color: var(--muted);
+    border: 1px solid var(--line); border-radius: 5px; padding: 1px 5px;
+  }
+  .dup-caution {
+    font-size: .76rem; color: var(--warn); background: var(--warn-soft);
+    border-radius: 8px; padding: 8px 10px; margin-top: 8px;
+  }
+
+  /* ---------- action bar ---------- */
+  .action-bar {
+    position: sticky; bottom: 0; margin-top: 4px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap;
+  }
+  .action-bar .status { font-size: .78rem; color: var(--muted); }
+  .action-bar .buttons { display: flex; gap: 10px; }
+  button.primary {
+    background: var(--accent); color: var(--card); border: none;
+    border-radius: 9px; padding: 11px 20px; font-size: .88rem; font-weight: 700; cursor: pointer;
+  }
+  button.secondary {
+    background: none; color: var(--muted); border: 1px solid var(--line);
+    border-radius: 9px; padding: 11px 16px; font-size: .88rem; font-weight: 600; cursor: pointer;
+  }
+
+  .foot-note {
+    font-size: .74rem; color: var(--muted); text-align: center; margin-top: 26px;
+  }
+  .foot-note code { font-family: var(--mono); background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; }
+
+  /* ---------- rate limit chip ---------- */
+  .rate-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: .72rem; color: var(--muted);
+    border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px;
+    margin-left: 10px;
+  }
+  .rate-chip .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+  /* ---------- auth gate ---------- */
+  .gate-overlay {
+    position: fixed; inset: 0; z-index: 20;
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: blur(3px);
+    display: flex; align-items: center; justify-content: center; padding: 20px;
+  }
+  .gate-card {
+    width: 100%; max-width: 380px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    padding: 28px 26px 24px; box-shadow: 0 20px 50px rgba(15, 31, 28, .18);
+  }
+  .gate-card .eyebrow { margin-bottom: 10px; }
+  .gate-card h2 { font-size: 1.15rem; margin: 0 0 6px; text-wrap: balance; }
+  .gate-card .sub { color: var(--muted); font-size: .82rem; margin: 0 0 20px; }
+  .gate-card .field { margin-bottom: 14px; }
+  .gate-card button.primary { width: 100%; margin-top: 4px; }
+  .gate-note {
+    display: flex; gap: 8px; font-size: .74rem; color: var(--muted);
+    background: var(--accent-soft); border-radius: 8px; padding: 9px 11px; margin-top: 16px;
+  }
+  .gate-note strong { color: var(--accent); }
+  body.gate-open { overflow: hidden; }
+  body:not(.gate-open) .gate-overlay { display: none; }
+</style>
+
+<div class="gate-overlay" id="gate">
+  <div class="gate-card">
+    <p class="eyebrow">STAFF INTAKE · ログイン</p>
+    <h2>スタッフ用登録フォーム</h2>
+    <p class="sub">氏名と共有パスコードを入力してください。入力者名は備考欄の記録に使われます。</p>
+    <div class="field">
+      <label>氏名<span class="req">必須</span></label>
+      <input type="text" id="gate-name" placeholder="例）田中" />
+    </div>
+    <div class="field">
+      <label>パスコード<span class="req">必須</span></label>
+      <input type="text" id="gate-pass" placeholder="共有パスコード" />
+    </div>
+    <button class="primary" type="button" id="gate-enter">入室する</button>
+    <p class="gate-note"><span>🔒</span><span>Tailscale Funnelのネットワーク制限に加え、<strong>パスコード＋氏名</strong>・<strong>同一IPのレート制限（1日20件目安、超過はブロックせずフラグ）</strong>で二重に保護しています。</span></p>
+  </div>
+</div>
+
+<div class="shell">
+  <div class="topbar">
+    <div>
+      <p class="eyebrow">STAFF INTAKE · raw_circle_submissions</p>
+      <h1>団体情報 新規登録</h1>
+      <p class="sub">入力内容はそのまま生データ層に保存されます。正規化・地図への反映は別工程です。</p>
+    </div>
+    <div>
+      <div class="source-picker" role="group" aria-label="登録元">
+        <button class="source-chip active" type="button" data-org="kagayaki">輝き</button>
+        <button class="source-chip" type="button" data-org="fvac">FVAC</button>
+        <button class="source-chip" type="button" data-org="kominkan">公民館</button>
+        <button class="source-chip" type="button" data-org="shakyoiku">社会教育</button>
+      </div>
+      <span class="rate-chip"><span class="dot"></span>入力者: <span id="rate-name">田中</span>・本日の登録 3件（目安20件、超過時は自動フラグ）</span>
+    </div>
+  </div>
+
+  <div class="workbench">
+    <div class="form-col">
+
+      <section class="card">
+        <h2><span class="step-no">1</span> 基本情報</h2>
+        <p class="hint">出典資料に記載されているとおりに書き写してください。表記ゆれの修正は正規化工程で行います。</p>
+        <div class="field-row">
+          <div class="field" style="flex-basis:100%">
+            <label>団体名<span class="req">必須</span></label>
+            <input type="text" id="f-name" value="さくら音訳の会" />
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field narrow">
+            <label>出典番号<span class="optional">任意</span></label>
+            <input type="text" id="f-sourceno" value="042" />
+          </div>
+          <div class="field">
+            <label>出典資料・掲載箇所<span class="optional">任意</span></label>
+            <input type="text" id="f-sourcepage" value="輝き団体名簿2026年版 p.18" />
+          </div>
+        </div>
+        <div class="field">
+          <label>活動内容</label>
+          <textarea id="f-desc">視覚障がい者向けの音訳（本や広報紙の音声化）ボランティア。月2回、中央公民館で編集・録音作業を行う。</textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>会費<span class="optional">任意・自由記述</span></label>
+            <input type="text" id="f-fee" value="年額1,000円" />
+          </div>
+          <div class="field">
+            <label>入会条件<span class="optional">任意・自由記述</span></label>
+            <input type="text" id="f-join" value="見学後に相談" />
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="step-no">2</span> カテゴリ</h2>
+        <p class="hint" id="cat-hint">複数選択可。登録元（<span id="cat-org-label">輝き</span>）の分類に合わせて選択肢が変わります。該当がなければ空欄で構いません。</p>
+        <div class="chip-field" id="cat-field"></div>
+        <div class="field" id="cat-other-field" style="display:none; margin-top:10px;">
+          <label>その他（自由記述）<span class="optional">正規タグへの割り当ては後工程で判断</span></label>
+          <input type="text" id="cat-other-text" placeholder="例）音訳・点訳" />
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="step-no">3</span> 連絡先</h2>
+        <div class="disclosure-banner">
+          <span>⚠</span>
+          <span><strong>公開確認が取れるまで地図には表示されません。</strong>電話・メール・代表者名は <code>contact_disclosure_status</code> が「公開可」になるまで非公開のまま保持されます。</span>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>代表者名<span class="optional">任意</span></label>
+            <input type="text" value="—" />
+          </div>
+          <div class="field">
+            <label>電話<span class="optional">任意</span></label>
+            <input type="text" value="—" />
+          </div>
+          <div class="field">
+            <label>メール<span class="optional">任意</span></label>
+            <input type="text" value="—" />
+          </div>
+        </div>
+        <div class="field" style="max-width:280px">
+          <label>公開確認状況</label>
+          <select id="f-disclosure">
+            <option>未確認（undisclosed）</option>
+            <option>一部公開可（partial）</option>
+            <option>公開可（full）</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="step-no">4</span> 活動場所</h2>
+        <div class="field">
+          <label>施設名で検索</label>
+          <input type="text" value="さくら" />
+        </div>
+        <div class="facility-suggest">
+          <button type="button">さくら会館 <span class="tag">facility #12・座標確認済み</span></button>
+          <button type="button">さくら会館 分館 <span class="tag">facility #31・要確認</span></button>
+          <button type="button" id="new-facility-btn">＋ 新規施設としてこの画面内で登録する</button>
+        </div>
+        <p class="hint" id="new-facility-hint" style="display:none; margin:-4px 0 12px;">
+          新規施設は既存の検証フラグと同じ扱いになります。座標が確定するまで <code style="font-family:inherit">needs_verification=1</code>・緯度経度は<code style="font-family:inherit">NULL</code>のまま保存され、地図には表示されません。
+        </p>
+        <div class="field">
+          <label>住所<span class="optional">施設が見つからない・新規登録する場合のみ</span></label>
+          <input type="text" placeholder="福生市〇〇 1-2-3" />
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="step-no">5</span> 活動日時</h2>
+        <p class="hint">資料の記載をそのまま <strong>元の記述</strong> に書き写すことが必須です。曜日等の構造化項目は分かる範囲で構いません。</p>
+        <div class="field-row">
+          <div class="field narrow">
+            <label>週パターン</label>
+            <select>
+              <option>毎週</option>
+              <option>第1</option>
+              <option>第1,3</option>
+              <option>第2,4</option>
+              <option>不定期</option>
+            </select>
+          </div>
+          <div class="field narrow">
+            <label>開始時刻</label>
+            <input type="time" value="10:00" />
+          </div>
+          <div class="field narrow">
+            <label>終了時刻</label>
+            <input type="time" value="12:00" />
+          </div>
+        </div>
+        <div class="field">
+          <label>曜日</label>
+          <div class="weekday-field">
+            <span class="weekday">月</span><span class="weekday">火</span>
+            <span class="weekday on">水</span><span class="weekday">木</span>
+            <span class="weekday">金</span><span class="weekday">土</span><span class="weekday">日</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>元の記述<span class="req">必須</span></label>
+          <textarea class="raw-text">第2・第4水曜日 10:00〜12:00（中央公民館）</textarea>
+        </div>
+        <button class="add-schedule" type="button">＋ 活動日時を追加（複数施設・複数曜日の場合）</button>
+      </section>
+
+      <section class="card">
+        <h2><span class="step-no">6</span> 備考</h2>
+        <textarea placeholder="入力者名、確認できなかった項目、次回フォロー事項など"></textarea>
+      </section>
+
+    </div>
+
+    <div class="rail">
+      <div class="rail-card">
+        <h3>重複候補</h3>
+        <div class="dup-item">
+          <div>
+            <div class="dup-name">さくら音訳会</div>
+            <div class="dup-meta">circle #58</div>
+          </div>
+          <span class="dup-badge">社会教育</span>
+        </div>
+        <div class="dup-item">
+          <div>
+            <div class="dup-name">音訳ボランティアさくら</div>
+            <div class="dup-meta">circle #71</div>
+          </div>
+          <span class="dup-badge">公民館(本館)</span>
+        </div>
+        <p class="dup-caution">名称が近い団体が2件あります。統合は本人からの申告があるまで行わないでください。</p>
+      </div>
+
+      <div class="rail-card">
+        <h3>raw_fields プレビュー</h3>
+        <div class="raw-json" id="json-preview">保存内容を表示</div>
+        <p class="rail-note">この内容がそのまま <code style="font-family:inherit">raw_circle_submissions.raw_fields</code> にJSON文字列として保存されます。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-bar">
+    <span class="status">未保存の変更があります</span>
+    <div class="buttons">
+      <button class="secondary" type="button">キャンセル</button>
+      <button class="primary" type="button">生データとして保存</button>
+    </div>
+  </div>
+
+  <p class="foot-note">この画面は gen/tyo 上に自前構築し、Tailscale Funnel で限定公開する想定のモックアップです（Notion は不使用）。</p>
+</div>
+
+<script>
+  // 登録元ごとのカテゴリ選択肢。輝きの7分類は circles.json の正規化タグに合わせた確定リスト。
+  // 社会教育団体はPDF掲載の9ジャンル（2026-07-17検討ログ）。
+  // FVACはNPO法別表の全国共通20分野（かもちゃんが現地確認、2026-08-06）。FVAC登録団体ページも同じ番号表記を使用。
+  // 公民館は独自分類が未確認かつ輝き・FVACいずれとも体系が異なる可能性が高いため、流用せず「その他」自由記述のみで受ける（2026-08-06）。
+  var CATEGORY_SETS = {
+    kagayaki: { label: '輝き', tags: ['保健・医療・福祉', '社会教育', 'まちづくり', '学術・文化・芸術・スポーツ', '子どもの健全育成', '国際協力', '人権擁護・平和'], defaultOn: ['保健・医療・福祉'] },
+    fvac: { label: 'FVAC', tags: [
+      '01 保健、医療又は福祉の増進', '02 社会教育の推進', '03 まちづくりの推進', '04 観光の振興',
+      '05 農山漁村又は中山間地域の振興', '06 学術、文化、芸術又はスポーツの振興', '07 環境の保全', '08 災害救援活動',
+      '09 地域安全活動', '10 人権の擁護又は平和の推進', '11 国際協力の活動', '12 男女共同参画社会の形成の促進',
+      '13 子どもの健全育成', '14 情報化社会の発展', '15 科学技術の振興', '16 経済活動の活性化',
+      '17 職業能力の開発又は雇用機会の拡充支援', '18 消費者の保護', '19 前各号活動団体への連絡・助言・援助', '20 条例で定める活動'
+    ], note: '特定非営利活動促進法（NPO法）別表の全国共通20分野。FVAC登録団体ページの表記に合わせ番号付きで表示。', defaultOn: [] },
+    kominkan: { label: '公民館', tags: [], note: '独自分類が未確認で、輝き・FVACとも体系が異なる可能性が高いため流用しません。当面は「その他」自由記述で受け、実物の「サークル案内」入手後に正式分類を検討します。', defaultOn: [] },
+    shakyoiku: { label: '社会教育', tags: ['教養', '文芸', '美術工芸', '音楽', '舞踊', '演芸', 'スポーツ', '生活', '福祉地域活動'], defaultOn: [] }
+  };
+
+  function renderCategoryChips(orgKey) {
+    var set = CATEGORY_SETS[orgKey];
+    var field = document.getElementById('cat-field');
+    document.getElementById('cat-org-label').textContent = set.label;
+    field.innerHTML = set.tags.map(function (tag) {
+      var on = set.defaultOn.indexOf(tag) !== -1 ? ' on' : '';
+      return '<button class="chip' + on + '" type="button">' + tag + '</button>';
+    }).join('');
+    var extra = document.getElementById('cat-field-note');
+    if (extra) extra.remove();
+    if (set.note) {
+      var p = document.createElement('p');
+      p.id = 'cat-field-note';
+      p.className = 'hint';
+      p.style.margin = '4px 0 0';
+      p.textContent = '※ ' + set.note;
+      field.insertAdjacentElement('afterend', p);
+    }
+    field.querySelectorAll('.chip').forEach(function (el) {
+      el.addEventListener('click', function () { el.classList.toggle('on'); renderPreview(); });
+    });
+  }
+
+  document.querySelectorAll('.source-chip').forEach(function (el) {
+    el.addEventListener('click', function () {
+      document.querySelectorAll('.source-chip').forEach(function (s) { s.classList.remove('active'); });
+      el.classList.add('active');
+      renderCategoryChips(el.dataset.org);
+      renderPreview();
+    });
+  });
+
+  document.querySelectorAll('.weekday').forEach(function (el) {
+    el.addEventListener('click', function () { el.classList.toggle('on'); renderPreview(); });
+  });
+
+  document.getElementById('cat-other-field').style.display = 'block';
+  document.getElementById('cat-other-text').addEventListener('input', renderPreview);
+
+  document.getElementById('new-facility-btn').addEventListener('click', function () {
+    document.getElementById('new-facility-hint').style.display = 'block';
+  });
+
+  document.getElementById('gate-enter').addEventListener('click', function () {
+    var name = document.getElementById('gate-name').value.trim();
+    document.getElementById('rate-name').textContent = name || '未入力';
+    document.body.classList.remove('gate-open');
+  });
+  document.body.classList.add('gate-open');
+
+  function renderPreview() {
+    var cats = Array.from(document.querySelectorAll('#cat-field .chip.on')).map(function (c) { return c.textContent; });
+    var catOther = document.getElementById('cat-other-text').value;
+    if (catOther) cats.push(catOther + '（自由記述）');
+    var days = Array.from(document.querySelectorAll('.weekday.on')).map(function (d) { return d.textContent; });
+    var data = {
+      organization_type: document.querySelector('.source-chip.active').dataset.org,
+      source_no: document.getElementById('f-sourceno').value,
+      name: document.getElementById('f-name').value,
+      description: document.getElementById('f-desc').value,
+      fee: document.getElementById('f-fee').value,
+      join_condition: document.getElementById('f-join').value,
+      categories: cats,
+      contact_disclosure_status: "undisclosed",
+      schedule_raw_text: document.querySelector('.raw-text').value,
+      schedule_days: days,
+      submitted_by: document.getElementById('gate-name').value || null
+    };
+    var json = JSON.stringify(data, null, 2)
+      .replace(/"([a-zA-Z_]+)":/g, '<span class="k">"$1"</span>:')
+      .replace(/: "([^"]*)"/g, ': <span class="s">"$1"</span>');
+    document.getElementById('json-preview').innerHTML = json;
+  }
+
+  renderCategoryChips('kagayaki');
+  document.querySelectorAll('input, textarea, select').forEach(function (el) {
+    el.addEventListener('input', renderPreview);
+  });
+  renderPreview();
+</script>
