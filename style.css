@@ -21,7 +21,7 @@ body {
 .app-header {
   align-items: center;
   background: linear-gradient(120deg, #f9f5e9 0%, #e1eee7 100%);
-  border-bottom: 1px solid rgba(24, 50, 45, .12);
+  border-top: 1px solid rgba(24, 50, 45, .12);
   display: flex;
   gap: 24px;
   justify-content: space-between;
@@ -81,7 +81,7 @@ main { position: relative; }
 .legend-dot.verified { background: var(--verified); }
 .legend-dot.unverified { background: var(--unverified); opacity: .68; }
 
-#map { height: calc(100vh - 286px); min-height: 430px; width: 100%; }
+#map { height: calc(100vh - 66px); min-height: 430px; width: 100%; }
 
 .circle-pin {
   align-items: center;
@@ -137,7 +137,7 @@ footer a { color: #fff; }
   .subtitle { font-size: .84rem; }
   .count-card { min-width: 96px; padding: 10px; }
   #data-summary { flex-basis: 100%; margin-left: 0; }
-  #map { height: calc(100vh - 318px); min-height: 400px; }
+  #map { height: calc(100vh - 98px); min-height: 400px; }
 }
 
 .proposal-banner {

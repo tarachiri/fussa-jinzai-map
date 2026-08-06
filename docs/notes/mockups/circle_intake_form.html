@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 </head>
 <body>
-<title>団体情報 登録画面（第4稿）— 福生市人材資源マップ</title>
+<title>団体情報 登録画面（第5稿）— 福生市人材資源マップ</title>
 <style>
   :root {
     --paper: #f6f2e8;
@@ -56,7 +56,8 @@
     background: var(--paper);
     color: var(--ink);
     font-family: var(--sans);
-    line-height: 1.55;
+    line-height: 1.6;
+    font-size: 16px;
   }
 
   .shell { max-width: 760px; margin: 0 auto; padding: 18px clamp(14px, 4vw, 28px) 48px; }
@@ -78,15 +79,15 @@
     color: var(--accent);
     margin: 0 0 6px;
   }
-  .topbar h1 { font-size: clamp(1.25rem, 6vw, 1.6rem); margin: 0 0 4px; text-wrap: balance; }
-  .topbar .sub { color: var(--muted); font-size: .84rem; margin: 0; }
+  .topbar h1 { font-size: clamp(1.3rem, 6vw, 1.65rem); margin: 0 0 4px; text-wrap: balance; }
+  .topbar .sub { color: var(--muted); font-size: .92rem; margin: 0; }
 
   .topbar-controls { display: flex; flex-direction: column; gap: 8px; }
   .source-picker { display: flex; gap: 6px; flex-wrap: wrap; }
   .source-chip {
-    font-size: .78rem;
+    font-size: .85rem;
     font-weight: 600;
-    padding: 8px 13px;
+    padding: 8px 14px;
     border-radius: 999px;
     border: 1px solid var(--line);
     background: var(--card);
@@ -99,44 +100,111 @@
 
   .rate-chip {
     display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px;
-    font-family: var(--mono); font-size: .7rem; color: var(--muted);
+    font-family: var(--mono); font-size: .74rem; color: var(--muted);
     border: 1px solid var(--line); border-radius: 999px; padding: 6px 11px;
     max-width: 100%; width: fit-content;
   }
   .rate-chip .dot { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
 
+  .ai-sim-toggle {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: .74rem; color: var(--muted); width: fit-content;
+  }
+  .ai-sim-toggle input { accent-color: var(--warn); }
+
+  /* ---------- stepper ---------- */
+  .stepper { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+  .step-dot {
+    font: inherit; font-size: .82rem; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 13px; border-radius: 999px; border: 1px solid var(--line);
+    background: var(--card); color: var(--muted); cursor: pointer;
+  }
+  .step-dot .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    flex: none; width: 21px; height: 21px; border-radius: 50%;
+    background: var(--line); color: var(--ink);
+    font-size: .72rem; font-weight: 700;
+  }
+  .step-dot.current { border-color: var(--accent); color: var(--ink); background: var(--accent-soft); }
+  .step-dot.current .num { background: var(--accent); color: var(--card); }
+  .step-dot.done .num { background: var(--accent-soft); color: var(--accent); }
+  .step-dot.done { color: var(--ink); }
+  .step-dot[disabled] { opacity: .48; cursor: not-allowed; }
+  @media (max-width: 520px) {
+    .step-dot .label { display: none; }
+    .step-dot { padding: 7px 9px; }
+  }
+
   /* ---------- form layout ---------- */
   .form-col { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+
+  .step-panel { display: none; }
+  .step-panel.active { display: block; }
 
   section.card {
     background: var(--card);
     border: 1px solid var(--line);
     border-radius: 14px;
-    padding: 16px 16px 18px;
+    padding: 18px 18px 20px;
   }
   section.card h2 {
-    font-size: .95rem;
-    margin: 0 0 3px;
+    font-size: 1.08rem;
+    margin: 0 0 4px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
   }
+  .h2-title { flex: 1; }
   .step-no {
     font-family: var(--mono);
-    font-size: .72rem;
+    font-size: .74rem;
     background: var(--accent-soft);
     color: var(--accent);
     border-radius: 6px;
     padding: 2px 7px;
+    flex: none;
   }
-  section.card .hint { color: var(--muted); font-size: .78rem; margin: 0 0 14px; }
+  section.card .hint { color: var(--muted); font-size: .86rem; margin: 0 0 14px; }
+
+  .ai-trigger {
+    all: unset; cursor: pointer; flex: none;
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: .78rem; font-weight: 700; color: var(--accent);
+    padding: 6px 11px; border: 1px solid var(--accent); border-radius: 999px;
+  }
+  .ai-trigger:hover { background: var(--accent-soft); }
+  .ai-panel {
+    margin: 4px 0 14px; border: 1px dashed var(--line); border-radius: 10px;
+    padding: 13px 14px; background: var(--card-raised);
+  }
+  .ai-label { display: block; font-size: .8rem; font-weight: 600; margin-bottom: 6px; }
+  .ai-panel textarea {
+    width: 100%; font: inherit; font-size: .92rem; color: var(--ink);
+    border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px;
+    background: var(--card); min-height: 52px; resize: vertical; margin-bottom: 9px;
+  }
+  .ai-ask-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .ai-loading { font-size: .84rem; color: var(--muted); }
+  .ai-response {
+    margin-top: 11px; padding: 11px 13px; border-radius: 8px;
+    background: var(--accent-soft); font-size: .9rem; line-height: 1.6;
+  }
+  .ai-response.error { background: var(--warn-soft); }
+  .ai-response-label {
+    font-size: .72rem; font-weight: 700; color: var(--accent);
+    text-transform: uppercase; letter-spacing: .05em; margin: 0 0 5px;
+  }
+  .ai-response.error .ai-response-label { color: var(--warn); }
+  .ai-response p:last-child { margin: 0; }
+  .ai-fallback-note { font-size: .74rem; color: var(--muted); margin: 10px 0 0; }
 
   .field-row { display: flex; gap: 12px; flex-wrap: wrap; }
   .field { display: flex; flex-direction: column; gap: 5px; flex: 1 1 160px; margin-bottom: 12px; min-width: 0; }
   .field.narrow { flex: 1 1 110px; }
-  .field label { font-size: .78rem; font-weight: 600; color: var(--ink); }
+  .field label { font-size: .86rem; font-weight: 600; color: var(--ink); }
   .field label .req { color: var(--warn); margin-left: 3px; }
-  .field label .optional { color: var(--muted); font-weight: 400; font-size: .72rem; }
+  .field label .optional { color: var(--muted); font-weight: 400; font-size: .78rem; }
   .field input[type="text"],
   .field input[type="time"],
   .field textarea,
@@ -147,21 +215,21 @@
     background: var(--card-raised);
     border: 1px solid var(--line);
     border-radius: 8px;
-    padding: 10px 11px;
+    padding: 10px 12px;
     width: 100%;
   }
-  .field textarea { resize: vertical; min-height: 64px; font-family: var(--sans); }
-  .field .raw-text { font-family: var(--mono); font-size: .85rem; }
+  .field textarea { resize: vertical; min-height: 68px; font-family: var(--sans); }
+  .field .raw-text { font-family: var(--mono); font-size: .88rem; }
   .field input:focus, .field textarea:focus, .field select:focus,
-  button:focus-visible, .source-chip:focus-visible, .chip:focus-visible {
+  button:focus-visible, .source-chip:focus-visible, .chip:focus-visible, .step-dot:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 1px;
   }
 
   .chip-field { display: flex; flex-wrap: wrap; gap: 7px; }
   .chip {
-    font-size: .8rem;
-    padding: 7px 12px;
+    font-size: .86rem;
+    padding: 7px 13px;
     border-radius: 999px;
     border: 1px solid var(--line);
     background: var(--card-raised);
@@ -172,25 +240,25 @@
 
   .weekday-field { display: flex; gap: 5px; flex-wrap: wrap; }
   .weekday {
-    width: 36px; height: 36px;
+    width: 38px; height: 38px;
     display: flex; align-items: center; justify-content: center;
     border-radius: 8px; border: 1px solid var(--line);
     background: var(--card-raised); color: var(--muted);
-    font-size: .82rem; cursor: pointer;
+    font-size: .86rem; cursor: pointer;
   }
   .weekday.on { background: var(--accent); border-color: var(--accent); color: var(--card); font-weight: 700; }
 
   .add-schedule {
     background: none; border: 1px dashed var(--line); color: var(--accent);
-    border-radius: 8px; padding: 10px; font-size: .82rem; font-weight: 600;
+    border-radius: 8px; padding: 11px; font-size: .86rem; font-weight: 600;
     cursor: pointer; width: 100%; margin-top: 2px;
   }
 
   .disclosure-banner {
     display: flex; gap: 10px; align-items: flex-start;
     background: var(--warn-soft); border-left: 3px solid var(--warn);
-    border-radius: 8px; padding: 10px 13px; margin-bottom: 14px;
-    font-size: .82rem; color: var(--ink);
+    border-radius: 8px; padding: 11px 14px; margin-bottom: 14px;
+    font-size: .88rem; color: var(--ink);
   }
   .disclosure-banner strong { color: var(--warn); }
 
@@ -199,56 +267,60 @@
     padding: 6px; display: flex; flex-direction: column; gap: 2px; margin-top: -4px; margin-bottom: 12px;
   }
   .facility-suggest button {
-    all: unset; cursor: pointer; padding: 9px; border-radius: 6px; font-size: .82rem;
+    all: unset; cursor: pointer; padding: 10px; border-radius: 6px; font-size: .88rem;
     display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap;
   }
   .facility-suggest button:hover { background: var(--accent-soft); }
-  .facility-suggest .tag { color: var(--muted); font-family: var(--mono); font-size: .7rem; }
+  .facility-suggest .tag { color: var(--muted); font-family: var(--mono); font-size: .72rem; }
 
-  /* ---------- confirm screen ---------- */
-  .confirm-view { display: flex; flex-direction: column; gap: 14px; }
-  .confirm-view[hidden] { display: none; }
+  /* ---------- confirm / success views ---------- */
+  .form-view, .confirm-view, .success-view { display: none; }
+  .form-view.active { display: block; }
+  .confirm-view.active { display: flex; flex-direction: column; gap: 14px; }
+  .success-view.active { display: block; }
+
   .back-link {
-    all: unset; cursor: pointer; color: var(--accent); font-size: .84rem; font-weight: 700;
+    all: unset; cursor: pointer; color: var(--accent); font-size: .88rem; font-weight: 700;
     padding: 8px 0; display: inline-flex; align-items: center; gap: 4px;
   }
-  .confirm-view h2 { font-size: 1.1rem; margin: 0 0 4px; }
+  .confirm-view h2 { font-size: 1.15rem; margin: 0 0 4px; }
   .rail-card {
     background: var(--card); border: 1px solid var(--line); border-radius: 14px;
-    padding: 16px 16px 18px;
+    padding: 17px 17px 19px;
   }
   .rail-card h3 {
-    font-size: .78rem; text-transform: uppercase; letter-spacing: .08em;
+    font-size: .82rem; text-transform: uppercase; letter-spacing: .08em;
     color: var(--muted); margin: 0 0 10px; font-weight: 700;
   }
-  dl.summary-list { display: grid; grid-template-columns: minmax(84px, 30%) 1fr; gap: 9px 12px; margin: 0; font-size: .87rem; }
+  .ai-suggest-card { border: 1px dashed var(--accent); }
+  dl.summary-list { display: grid; grid-template-columns: minmax(84px, 30%) 1fr; gap: 10px 12px; margin: 0; font-size: .94rem; }
   dl.summary-list dt { color: var(--muted); }
   dl.summary-list dd { margin: 0; overflow-wrap: anywhere; }
-  .tag-mini { background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 2px 9px; font-size: .74rem; margin: 0 5px 4px 0; display: inline-block; }
+  .tag-mini { background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 2px 9px; font-size: .78rem; margin: 0 5px 4px 0; display: inline-block; }
 
   .raw-json {
-    font-family: var(--mono); font-size: .74rem; line-height: 1.65;
+    font-family: var(--mono); font-size: .78rem; line-height: 1.7;
     background: var(--card-raised); border: 1px solid var(--line); border-radius: 10px;
     padding: 12px; max-height: 320px; overflow: auto; white-space: pre-wrap; word-break: break-word; color: var(--ink);
   }
   .raw-json .k { color: var(--accent); }
   .raw-json .s { color: var(--warn); }
-  .rail-note { font-size: .74rem; color: var(--muted); margin: 10px 0 0; }
+  .rail-note { font-size: .78rem; color: var(--muted); margin: 10px 0 0; }
 
   .dup-item {
     display: flex; justify-content: space-between; gap: 8px; align-items: center;
-    padding: 8px 0; border-top: 1px solid var(--line); font-size: .82rem; flex-wrap: wrap;
+    padding: 9px 0; border-top: 1px solid var(--line); font-size: .88rem; flex-wrap: wrap;
   }
   .dup-item:first-of-type { border-top: none; padding-top: 0; }
   .dup-name { font-weight: 600; }
-  .dup-meta { color: var(--muted); font-size: .72rem; font-family: var(--mono); }
+  .dup-meta { color: var(--muted); font-size: .76rem; font-family: var(--mono); }
   .dup-badge {
-    font-size: .68rem; font-family: var(--mono); color: var(--muted);
+    font-size: .72rem; font-family: var(--mono); color: var(--muted);
     border: 1px solid var(--line); border-radius: 5px; padding: 1px 5px;
   }
   .dup-caution {
-    font-size: .76rem; color: var(--warn); background: var(--warn-soft);
-    border-radius: 8px; padding: 8px 10px; margin-top: 8px;
+    font-size: .82rem; color: var(--warn); background: var(--warn-soft);
+    border-radius: 8px; padding: 9px 11px; margin-top: 8px;
   }
 
   /* ---------- success screen ---------- */
@@ -264,16 +336,16 @@
     padding: 14px 16px; padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
     display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
   }
-  .action-bar .status { font-size: .78rem; color: var(--muted); }
+  .action-bar .status { font-size: .84rem; color: var(--muted); }
   .action-bar .buttons { display: flex; gap: 10px; flex-wrap: wrap; width: 100%; }
   button.primary {
     background: var(--accent); color: var(--card); border: none;
-    border-radius: 9px; padding: 12px 20px; font-size: .9rem; font-weight: 700; cursor: pointer;
+    border-radius: 9px; padding: 12px 20px; font-size: .95rem; font-weight: 700; cursor: pointer;
     flex: 1 1 auto;
   }
   button.secondary {
     background: none; color: var(--muted); border: 1px solid var(--line);
-    border-radius: 9px; padding: 12px 16px; font-size: .9rem; font-weight: 600; cursor: pointer;
+    border-radius: 9px; padding: 12px 16px; font-size: .95rem; font-weight: 600; cursor: pointer;
     flex: 1 1 auto;
   }
   @media (min-width: 480px) {
@@ -282,7 +354,7 @@
   }
 
   .foot-note {
-    font-size: .74rem; color: var(--muted); text-align: center; margin-top: 22px;
+    font-size: .78rem; color: var(--muted); text-align: center; margin-top: 22px;
   }
   .foot-note code { font-family: var(--mono); background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; }
 
@@ -300,12 +372,12 @@
     padding: 26px 22px 22px; box-shadow: 0 20px 50px rgba(15, 31, 28, .18);
   }
   .gate-card .eyebrow { margin-bottom: 10px; }
-  .gate-card h2 { font-size: 1.1rem; margin: 0 0 6px; text-wrap: balance; }
-  .gate-card .sub { color: var(--muted); font-size: .82rem; margin: 0 0 18px; }
+  .gate-card h2 { font-size: 1.18rem; margin: 0 0 6px; text-wrap: balance; }
+  .gate-card .sub { color: var(--muted); font-size: .9rem; margin: 0 0 18px; }
   .gate-card .field { margin-bottom: 14px; }
   .gate-card button.primary { width: 100%; margin-top: 4px; }
   .gate-note {
-    display: flex; gap: 8px; font-size: .74rem; color: var(--muted);
+    display: flex; gap: 8px; font-size: .8rem; color: var(--muted);
     background: var(--accent-soft); border-radius: 8px; padding: 9px 11px; margin-top: 16px;
   }
   .gate-note strong { color: var(--accent); }
@@ -353,15 +425,30 @@
         <button class="source-chip" type="button" data-org="shakyoiku">社会教育</button>
       </div>
       <span class="rate-chip"><span class="dot"></span><span>入力者: <span id="rate-name">田中</span>・本日3件（上限目安20）</span></span>
+      <label class="ai-sim-toggle"><input type="checkbox" id="ai-fail-sim" /> AI失敗をシミュレート（デモ用トグル）</label>
     </div>
   </div>
 
-  <div class="form-view" id="form-view">
+  <div class="form-view active" id="form-view">
+    <div class="stepper" id="stepper" role="tablist" aria-label="入力ステップ"></div>
+
     <div class="form-col">
 
-      <section class="card">
-        <h2><span class="step-no">1</span> 基本情報</h2>
-        <p class="hint">出典資料に記載されているとおりに書き写してください。表記ゆれの修正は正規化工程で行います。</p>
+      <section class="card step-panel active" data-step="0">
+        <h2><span class="step-no">1</span><span class="h2-title">基本情報</span>
+          <button class="ai-trigger" type="button" data-ai-step="0">🤖 AIに相談</button>
+        </h2>
+        <p class="hint">資料と現状が異なる場合は、現状を優先して記入してください。差分は備考欄に一言残してください。</p>
+        <div class="ai-panel" id="ai-panel-0" hidden>
+          <label class="ai-label">AIへの質問</label>
+          <textarea class="ai-question" placeholder="例）会費が資料と現状で違う場合、どう書けばいい？"></textarea>
+          <div class="ai-ask-row">
+            <button class="secondary ai-ask-btn" type="button" data-ai-step="0">送信</button>
+            <span class="ai-loading" hidden>考え中…</span>
+          </div>
+          <div class="ai-response" hidden></div>
+          <p class="ai-fallback-note">AIは提案のみ行います。入力欄への反映は必ずスタッフ自身の操作で行ってください。API接続に失敗しても手入力のみで登録を続けられます。</p>
+        </div>
         <div class="field-row">
           <div class="field" style="flex-basis:100%">
             <label>団体名<span class="req">必須</span></label>
@@ -394,9 +481,21 @@
         </div>
       </section>
 
-      <section class="card">
-        <h2><span class="step-no">2</span> カテゴリ</h2>
+      <section class="card step-panel" data-step="1">
+        <h2><span class="step-no">2</span><span class="h2-title">カテゴリ</span>
+          <button class="ai-trigger" type="button" data-ai-step="1">🤖 AIに相談</button>
+        </h2>
         <p class="hint" id="cat-hint">複数選択可。登録元（<span id="cat-org-label">輝き</span>）の分類に合わせて選択肢が変わります。該当がなければ空欄で構いません。</p>
+        <div class="ai-panel" id="ai-panel-1" hidden>
+          <label class="ai-label">AIへの質問</label>
+          <textarea class="ai-question" placeholder="例）このサークル、カテゴリ何番に該当しそう？"></textarea>
+          <div class="ai-ask-row">
+            <button class="secondary ai-ask-btn" type="button" data-ai-step="1">送信</button>
+            <span class="ai-loading" hidden>考え中…</span>
+          </div>
+          <div class="ai-response" hidden></div>
+          <p class="ai-fallback-note">AIは提案のみ行います。入力欄への反映は必ずスタッフ自身の操作で行ってください。API接続に失敗しても手入力のみで登録を続けられます。</p>
+        </div>
         <div class="chip-field" id="cat-field"></div>
         <div class="field" id="cat-other-field" style="display:none; margin-top:10px;">
           <label>その他（自由記述）<span class="optional">正規タグへの割り当ては後工程で判断</span></label>
@@ -404,8 +503,20 @@
         </div>
       </section>
 
-      <section class="card">
-        <h2><span class="step-no">3</span> 連絡先</h2>
+      <section class="card step-panel" data-step="2">
+        <h2><span class="step-no">3</span><span class="h2-title">連絡先</span>
+          <button class="ai-trigger" type="button" data-ai-step="2">🤖 AIに相談</button>
+        </h2>
+        <div class="ai-panel" id="ai-panel-2" hidden>
+          <label class="ai-label">AIへの質問</label>
+          <textarea class="ai-question" placeholder="例）電話番号が資料に書いてないときは？"></textarea>
+          <div class="ai-ask-row">
+            <button class="secondary ai-ask-btn" type="button" data-ai-step="2">送信</button>
+            <span class="ai-loading" hidden>考え中…</span>
+          </div>
+          <div class="ai-response" hidden></div>
+          <p class="ai-fallback-note">AIは提案のみ行います。入力欄への反映は必ずスタッフ自身の操作で行ってください。API接続に失敗しても手入力のみで登録を続けられます。</p>
+        </div>
         <div class="disclosure-banner">
           <span>⚠</span>
           <span><strong>公開確認が取れるまで地図には表示されません。</strong>電話・メール・代表者名は <code>contact_disclosure_status</code> が「公開可」になるまで非公開のまま保持されます。</span>
@@ -434,8 +545,20 @@
         </div>
       </section>
 
-      <section class="card">
-        <h2><span class="step-no">4</span> 活動場所</h2>
+      <section class="card step-panel" data-step="3">
+        <h2><span class="step-no">4</span><span class="h2-title">活動場所</span>
+          <button class="ai-trigger" type="button" data-ai-step="3">🤖 AIに相談</button>
+        </h2>
+        <div class="ai-panel" id="ai-panel-3" hidden>
+          <label class="ai-label">AIへの質問</label>
+          <textarea class="ai-question" placeholder="例）「さくら会館」で見つからない場合は？"></textarea>
+          <div class="ai-ask-row">
+            <button class="secondary ai-ask-btn" type="button" data-ai-step="3">送信</button>
+            <span class="ai-loading" hidden>考え中…</span>
+          </div>
+          <div class="ai-response" hidden></div>
+          <p class="ai-fallback-note">AIは提案のみ行います。入力欄への反映は必ずスタッフ自身の操作で行ってください。API接続に失敗しても手入力のみで登録を続けられます。</p>
+        </div>
         <div class="field">
           <label>施設名で検索</label>
           <input type="text" id="f-facility-search" value="さくら" />
@@ -454,9 +577,21 @@
         </div>
       </section>
 
-      <section class="card">
-        <h2><span class="step-no">5</span> 活動日時</h2>
+      <section class="card step-panel" data-step="4">
+        <h2><span class="step-no">5</span><span class="h2-title">活動日時</span>
+          <button class="ai-trigger" type="button" data-ai-step="4">🤖 AIに相談</button>
+        </h2>
         <p class="hint">資料の記載をそのまま <strong>元の記述</strong> に書き写すことが必須です。曜日等の構造化項目は分かる範囲で構いません。</p>
+        <div class="ai-panel" id="ai-panel-4" hidden>
+          <label class="ai-label">AIへの質問</label>
+          <textarea class="ai-question" placeholder="例）「不定期」としか書いていない場合は？"></textarea>
+          <div class="ai-ask-row">
+            <button class="secondary ai-ask-btn" type="button" data-ai-step="4">送信</button>
+            <span class="ai-loading" hidden>考え中…</span>
+          </div>
+          <div class="ai-response" hidden></div>
+          <p class="ai-fallback-note">AIは提案のみ行います。入力欄への反映は必ずスタッフ自身の操作で行ってください。API接続に失敗しても手入力のみで登録を続けられます。</p>
+        </div>
         <div class="field-row">
           <div class="field narrow">
             <label>週パターン</label>
@@ -492,27 +627,40 @@
         <button class="add-schedule" type="button">＋ 活動日時を追加（複数施設・複数曜日の場合）</button>
       </section>
 
-      <section class="card">
-        <h2><span class="step-no">6</span> 備考</h2>
-        <textarea id="f-note" placeholder="入力者名、確認できなかった項目、次回フォロー事項など"></textarea>
+      <section class="card step-panel" data-step="5">
+        <h2><span class="step-no">6</span><span class="h2-title">備考</span>
+          <button class="ai-trigger" type="button" data-ai-step="5">🤖 AIに相談</button>
+        </h2>
+        <p class="hint">資料と現状に違いがあった場合は一言メモを残してください（例：「資料では会費500円だったが現在は1,000円に変更」など）。</p>
+        <div class="ai-panel" id="ai-panel-5" hidden>
+          <label class="ai-label">AIへの質問</label>
+          <textarea class="ai-question" placeholder="例）備考には何を書けばいい？"></textarea>
+          <div class="ai-ask-row">
+            <button class="secondary ai-ask-btn" type="button" data-ai-step="5">送信</button>
+            <span class="ai-loading" hidden>考え中…</span>
+          </div>
+          <div class="ai-response" hidden></div>
+          <p class="ai-fallback-note">AIは提案のみ行います。入力欄への反映は必ずスタッフ自身の操作で行ってください。API接続に失敗しても手入力のみで登録を続けられます。</p>
+        </div>
+        <textarea id="f-note" placeholder="例）資料では活動場所が松林会館だったが、現在はさくら会館に変更。入力者名や確認できなかった項目もここに記載"></textarea>
       </section>
 
     </div>
 
     <div class="action-bar">
-      <span class="status">未保存の変更があります</span>
+      <span class="status" id="step-status">1 / 6：基本情報</span>
       <div class="buttons">
-        <button class="secondary" type="button">キャンセル</button>
-        <button class="primary" type="button" id="btn-review">内容を確認する →</button>
+        <button class="secondary" type="button" id="btn-step-back">キャンセル</button>
+        <button class="primary" type="button" id="btn-step-next">次へ →</button>
       </div>
     </div>
   </div>
 
-  <div class="confirm-view" id="confirm-view" hidden>
+  <div class="confirm-view" id="confirm-view">
     <button class="back-link" type="button" id="btn-back-top">← 戻って修正する</button>
     <div>
       <h2>この内容で保存します</h2>
-      <p class="hint">保存後の修正はレビュー画面からの差し戻しが必要です。内容を確認してください。</p>
+      <p class="hint">保存しても正規化・地図反映はまだ行われません。レビュー画面での承認を経てから反映されます。</p>
     </div>
 
     <div class="rail-card">
@@ -541,6 +689,14 @@
       <p class="dup-caution">名称が近い団体が2件あります。統合は本人からの申告があるまで行わないでください。</p>
     </div>
 
+    <div class="rail-card ai-suggest-card">
+      <h3>AI正規化案（参考情報）</h3>
+      <p class="hint" style="margin:0 0 12px;">この案は <code style="font-family:inherit">ai_normalization_suggestion</code> として raw_fields とは別に保存されます。circlesへの反映はレビュー画面（まじまじの承認）を経てから行われ、この画面での「保存する」では確定しません。</p>
+      <button class="secondary" type="button" id="btn-ai-suggest">AI正規化案を生成</button>
+      <span class="ai-loading" id="ai-suggest-loading" hidden>考え中…</span>
+      <div class="raw-json" id="ai-suggest-output" style="margin-top:12px; display:none;"></div>
+    </div>
+
     <div class="rail-card">
       <h3>raw_fields プレビュー</h3>
       <div class="raw-json" id="json-preview">保存内容を表示</div>
@@ -556,16 +712,16 @@
     </div>
   </div>
 
-  <div class="success-view" id="success-view" hidden>
+  <div class="success-view" id="success-view">
     <div class="rail-card success-card">
       <p class="emoji">✅</p>
       <h2>保存しました</h2>
-      <p class="hint">raw_circle_submissions に1件追加されました（モックアップのため実際の保存は行われません）。</p>
+      <p class="hint">raw_circle_submissions に1件追加されました（モックアップのため実際の保存は行われません）。正規化はレビュー画面での承認後に行われます。</p>
       <button class="primary" type="button" id="btn-new-entry">続けて登録する</button>
     </div>
   </div>
 
-  <p class="foot-note">この画面は gen/tyo 上に自前構築し、Tailscale Funnel で限定公開する想定のモックアップです（Notion は不使用）。</p>
+  <p class="foot-note">この画面は gen/tyo 上に自前構築し、Tailscale Funnel で限定公開する想定のモックアップです（Notion は不使用）。AI相談機能はAnthropic API（軽量モデル想定）をgen/tyoサーバー側からのみ呼び出す設計です。</p>
 </div>
 
 <script>
@@ -634,6 +790,73 @@
   });
   document.body.classList.add('gate-open');
 
+  /* ---------- AI相談（モックアップ・実際のAPI呼び出しは行わない） ---------- */
+  var AI_DEMO = {
+    0: '資料の記載を書き写しつつ、実際と異なる場合は現状を優先して入力してください。差分は備考欄に「資料では○○、現在は△△」のように一言残すと後工程で助かります。',
+    1: '活動内容から判断すると近いカテゴリの候補はありますが、最終的な選択は必ずスタッフ自身の判断でお願いします。この提案は参考情報です。',
+    2: '電話番号が不明な場合は無理に埋めず「—」のままで構いません。公開確認状況は「未確認」のままにしてください。',
+    3: '表記ゆれ（例：さくら会館 分館）の可能性があります。候補一覧を確認し、見つからなければ新規施設として登録してください。',
+    4: '週パターンは「不定期」を選び、元の記述欄に資料の文言をそのまま書き写してください。曜日・時刻欄は空欄のままで構いません。',
+    5: '資料と現状の違い、確認できなかった項目、次回フォローすべきことを書いておくと、レビュー時に役立ちます。'
+  };
+
+  document.querySelectorAll('.ai-trigger').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var panel = document.getElementById('ai-panel-' + btn.dataset.aiStep);
+      panel.hidden = !panel.hidden;
+    });
+  });
+
+  document.querySelectorAll('.ai-ask-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var step = btn.dataset.aiStep;
+      var panel = document.getElementById('ai-panel-' + step);
+      var loading = panel.querySelector('.ai-loading');
+      var responseEl = panel.querySelector('.ai-response');
+      var failSim = document.getElementById('ai-fail-sim').checked;
+      loading.hidden = false;
+      responseEl.hidden = true;
+      btn.disabled = true;
+      setTimeout(function () {
+        loading.hidden = true;
+        btn.disabled = false;
+        responseEl.hidden = false;
+        if (failSim) {
+          responseEl.className = 'ai-response error';
+          responseEl.innerHTML = '<p class="ai-response-label">エラー</p><p>AI提案を取得できませんでした。手入力のみで登録を続けられます。</p>';
+        } else {
+          responseEl.className = 'ai-response';
+          responseEl.innerHTML = '<p class="ai-response-label">AIの提案（参考情報・自動入力はされません）</p><p>' + AI_DEMO[step] + '</p>';
+        }
+      }, 700);
+    });
+  });
+
+  document.getElementById('btn-ai-suggest').addEventListener('click', function () {
+    var loading = document.getElementById('ai-suggest-loading');
+    var output = document.getElementById('ai-suggest-output');
+    var failSim = document.getElementById('ai-fail-sim').checked;
+    loading.hidden = false;
+    output.style.display = 'none';
+    setTimeout(function () {
+      loading.hidden = true;
+      output.style.display = 'block';
+      if (failSim) {
+        output.textContent = 'AI提案を取得できませんでした。手入力のみでレビューに進めます（このエラーは raw_fields の保存には影響しません）。';
+      } else {
+        var data = collectData();
+        var suggestion = {
+          normalized_name: data.name,
+          suggested_category: data.categories[0] || '(提案なし)',
+          suggested_facility_match: data.facility || null,
+          note: 'circlesへは自動反映されません。レビュー画面での承認が必要です。'
+        };
+        output.textContent = JSON.stringify(suggestion, null, 2);
+      }
+    }, 800);
+  });
+
+  /* ---------- データ収集・表示 ---------- */
   function collectData() {
     var cats = Array.from(document.querySelectorAll('#cat-field .chip.on')).map(function (c) { return c.textContent; });
     var catOther = document.getElementById('cat-other-text').value;
@@ -672,6 +895,7 @@
       ['活動場所', data.facility + (data.address ? '（' + data.address + '）' : '')],
       ['活動日時', data.schedule_raw_text],
       ['連絡先公開状況', '未確認（undisclosed）'],
+      ['備考', data.note || '（なし）'],
       ['入力者', data.submitted_by || '未入力']
     ];
     document.getElementById('summary-list').innerHTML = rows.map(function (r) {
@@ -686,25 +910,80 @@
     document.getElementById('json-preview').innerHTML = json;
   }
 
+  /* ---------- ステップ制御 ---------- */
+  var STEP_LABELS = ['基本情報', 'カテゴリ', '連絡先', '活動場所', '活動日時', '備考', '確認'];
+  var currentStep = 0;
+  var maxStepReached = 0;
+
   function showView(name) {
-    document.getElementById('form-view').hidden = name !== 'form';
-    document.getElementById('confirm-view').hidden = name !== 'confirm';
-    document.getElementById('success-view').hidden = name !== 'success';
+    document.getElementById('form-view').classList.toggle('active', name === 'form');
+    document.getElementById('confirm-view').classList.toggle('active', name === 'confirm');
+    document.getElementById('success-view').classList.toggle('active', name === 'success');
     window.scrollTo(0, 0);
   }
 
-  document.getElementById('btn-review').addEventListener('click', function () {
-    var data = collectData();
-    renderSummary(data);
-    renderJson(data);
-    showView('confirm');
+  function renderStepper() {
+    var wrap = document.getElementById('stepper');
+    wrap.innerHTML = STEP_LABELS.map(function (label, i) {
+      var stateClass = i === currentStep && currentStep < 6 ? 'current' : (i <= maxStepReached ? 'done' : '');
+      var disabledAttr = i > maxStepReached ? 'disabled' : '';
+      var num = i < 6 ? String(i + 1) : '✓';
+      return '<button class="step-dot ' + stateClass + '" data-step="' + i + '" ' + disabledAttr +
+        ' aria-label="' + (i + 1) + '. ' + label + '"><span class="num">' + num + '</span><span class="label">' + label + '</span></button>';
+    }).join('');
+    wrap.querySelectorAll('.step-dot').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var i = Number(btn.dataset.step);
+        if (i > maxStepReached) return;
+        goToStep(i);
+      });
+    });
+  }
+
+  function updateActionBar() {
+    var backBtn = document.getElementById('btn-step-back');
+    var nextBtn = document.getElementById('btn-step-next');
+    backBtn.textContent = currentStep === 0 ? 'キャンセル' : '← 戻る';
+    nextBtn.textContent = currentStep < 5 ? '次へ →' : '内容を確認する →';
+    document.getElementById('step-status').textContent = (currentStep + 1) + ' / 6：' + STEP_LABELS[currentStep];
+  }
+
+  function goToStep(i) {
+    currentStep = i;
+    if (i === 6) {
+      var data = collectData();
+      renderSummary(data);
+      renderJson(data);
+      showView('confirm');
+    } else {
+      showView('form');
+      document.querySelectorAll('.step-panel').forEach(function (p) {
+        p.classList.toggle('active', Number(p.dataset.step) === i);
+      });
+      updateActionBar();
+    }
+    renderStepper();
+  }
+
+  document.getElementById('btn-step-back').addEventListener('click', function () {
+    if (currentStep > 0) goToStep(currentStep - 1);
   });
-  document.getElementById('btn-back-top').addEventListener('click', function () { showView('form'); });
-  document.getElementById('btn-back-bottom').addEventListener('click', function () { showView('form'); });
+  document.getElementById('btn-step-next').addEventListener('click', function () {
+    maxStepReached = Math.max(maxStepReached, currentStep + 1);
+    goToStep(currentStep + 1 <= 6 ? currentStep + 1 : 6);
+  });
+  document.getElementById('btn-back-top').addEventListener('click', function () { goToStep(5); });
+  document.getElementById('btn-back-bottom').addEventListener('click', function () { goToStep(5); });
   document.getElementById('btn-final-save').addEventListener('click', function () { showView('success'); });
-  document.getElementById('btn-new-entry').addEventListener('click', function () { showView('form'); });
+  document.getElementById('btn-new-entry').addEventListener('click', function () {
+    currentStep = 0;
+    maxStepReached = 0;
+    goToStep(0);
+  });
 
   renderCategoryChips('kagayaki');
+  renderStepper();
+  updateActionBar();
   showView('form');
 </script>
 
