@@ -1,4 +1,11 @@
-<title>団体情報 登録画面（第2稿）— 福生市人材資源マップ</title>
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+</head>
+<body>
+<title>団体情報 登録画面（第4稿）— 福生市人材資源マップ</title>
 <style>
   :root {
     --paper: #f6f2e8;
@@ -52,18 +59,16 @@
     line-height: 1.55;
   }
 
-  .shell { max-width: 1180px; margin: 0 auto; padding: 22px clamp(14px, 3vw, 36px) 60px; }
+  .shell { max-width: 760px; margin: 0 auto; padding: 18px clamp(14px, 4vw, 28px) 48px; }
 
   /* ---------- header ---------- */
   .topbar {
     display: flex;
-    flex-wrap: wrap;
-    gap: 18px;
-    align-items: flex-end;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 14px;
     border-bottom: 1px solid var(--line);
-    padding-bottom: 18px;
-    margin-bottom: 22px;
+    padding-bottom: 16px;
+    margin-bottom: 18px;
   }
   .eyebrow {
     font-family: var(--mono);
@@ -73,14 +78,15 @@
     color: var(--accent);
     margin: 0 0 6px;
   }
-  .topbar h1 { font-size: clamp(1.3rem, 2.6vw, 1.7rem); margin: 0 0 4px; text-wrap: balance; }
-  .topbar .sub { color: var(--muted); font-size: .86rem; margin: 0; }
+  .topbar h1 { font-size: clamp(1.25rem, 6vw, 1.6rem); margin: 0 0 4px; text-wrap: balance; }
+  .topbar .sub { color: var(--muted); font-size: .84rem; margin: 0; }
 
+  .topbar-controls { display: flex; flex-direction: column; gap: 8px; }
   .source-picker { display: flex; gap: 6px; flex-wrap: wrap; }
   .source-chip {
     font-size: .78rem;
     font-weight: 600;
-    padding: 7px 13px;
+    padding: 8px 13px;
     border-radius: 999px;
     border: 1px solid var(--line);
     background: var(--card);
@@ -91,25 +97,22 @@
   @media (prefers-color-scheme: dark) { .source-chip.active { background: var(--accent); color: #0b1a17; border-color: var(--accent); } }
   :root[data-theme="dark"] .source-chip.active { background: var(--accent); color: #0b1a17; border-color: var(--accent); }
 
-  /* ---------- layout ---------- */
-  .workbench {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 320px;
-    gap: 20px;
-    align-items: start;
+  .rate-chip {
+    display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: .7rem; color: var(--muted);
+    border: 1px solid var(--line); border-radius: 999px; padding: 6px 11px;
+    max-width: 100%; width: fit-content;
   }
-  @media (max-width: 880px) {
-    .workbench { grid-template-columns: 1fr; }
-    .rail { position: static !important; order: -1; }
-  }
+  .rate-chip .dot { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
 
-  .form-col { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  /* ---------- form layout ---------- */
+  .form-col { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 
   section.card {
     background: var(--card);
     border: 1px solid var(--line);
     border-radius: 14px;
-    padding: 18px 20px 20px;
+    padding: 16px 16px 18px;
   }
   section.card h2 {
     font-size: .95rem;
@@ -121,7 +124,6 @@
   .step-no {
     font-family: var(--mono);
     font-size: .72rem;
-    color: var(--muted);
     background: var(--accent-soft);
     color: var(--accent);
     border-radius: 6px;
@@ -130,8 +132,8 @@
   section.card .hint { color: var(--muted); font-size: .78rem; margin: 0 0 14px; }
 
   .field-row { display: flex; gap: 12px; flex-wrap: wrap; }
-  .field { display: flex; flex-direction: column; gap: 5px; flex: 1 1 200px; margin-bottom: 12px; }
-  .field.narrow { flex: 0 1 160px; }
+  .field { display: flex; flex-direction: column; gap: 5px; flex: 1 1 160px; margin-bottom: 12px; min-width: 0; }
+  .field.narrow { flex: 1 1 110px; }
   .field label { font-size: .78rem; font-weight: 600; color: var(--ink); }
   .field label .req { color: var(--warn); margin-left: 3px; }
   .field label .optional { color: var(--muted); font-weight: 400; font-size: .72rem; }
@@ -140,16 +142,16 @@
   .field textarea,
   .field select {
     font: inherit;
-    font-size: .88rem;
+    font-size: 1rem;
     color: var(--ink);
     background: var(--card-raised);
     border: 1px solid var(--line);
     border-radius: 8px;
-    padding: 9px 11px;
+    padding: 10px 11px;
     width: 100%;
   }
   .field textarea { resize: vertical; min-height: 64px; font-family: var(--sans); }
-  .field .raw-text { font-family: var(--mono); font-size: .82rem; }
+  .field .raw-text { font-family: var(--mono); font-size: .85rem; }
   .field input:focus, .field textarea:focus, .field select:focus,
   button:focus-visible, .source-chip:focus-visible, .chip:focus-visible {
     outline: 2px solid var(--accent);
@@ -159,7 +161,7 @@
   .chip-field { display: flex; flex-wrap: wrap; gap: 7px; }
   .chip {
     font-size: .8rem;
-    padding: 6px 12px;
+    padding: 7px 12px;
     border-radius: 999px;
     border: 1px solid var(--line);
     background: var(--card-raised);
@@ -168,9 +170,9 @@
   }
   .chip.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
 
-  .weekday-field { display: flex; gap: 6px; }
+  .weekday-field { display: flex; gap: 5px; flex-wrap: wrap; }
   .weekday {
-    width: 34px; height: 34px;
+    width: 36px; height: 36px;
     display: flex; align-items: center; justify-content: center;
     border-radius: 8px; border: 1px solid var(--line);
     background: var(--card-raised); color: var(--muted);
@@ -180,7 +182,7 @@
 
   .add-schedule {
     background: none; border: 1px dashed var(--line); color: var(--accent);
-    border-radius: 8px; padding: 9px; font-size: .82rem; font-weight: 600;
+    border-radius: 8px; padding: 10px; font-size: .82rem; font-weight: 600;
     cursor: pointer; width: 100%; margin-top: 2px;
   }
 
@@ -197,26 +199,37 @@
     padding: 6px; display: flex; flex-direction: column; gap: 2px; margin-top: -4px; margin-bottom: 12px;
   }
   .facility-suggest button {
-    all: unset; cursor: pointer; padding: 7px 9px; border-radius: 6px; font-size: .82rem;
-    display: flex; justify-content: space-between; gap: 8px;
+    all: unset; cursor: pointer; padding: 9px; border-radius: 6px; font-size: .82rem;
+    display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap;
   }
   .facility-suggest button:hover { background: var(--accent-soft); }
   .facility-suggest .tag { color: var(--muted); font-family: var(--mono); font-size: .7rem; }
 
-  /* ---------- right rail ---------- */
-  .rail { position: sticky; top: 18px; display: flex; flex-direction: column; gap: 14px; }
+  /* ---------- confirm screen ---------- */
+  .confirm-view { display: flex; flex-direction: column; gap: 14px; }
+  .confirm-view[hidden] { display: none; }
+  .back-link {
+    all: unset; cursor: pointer; color: var(--accent); font-size: .84rem; font-weight: 700;
+    padding: 8px 0; display: inline-flex; align-items: center; gap: 4px;
+  }
+  .confirm-view h2 { font-size: 1.1rem; margin: 0 0 4px; }
   .rail-card {
     background: var(--card); border: 1px solid var(--line); border-radius: 14px;
-    padding: 16px 18px;
+    padding: 16px 16px 18px;
   }
   .rail-card h3 {
     font-size: .78rem; text-transform: uppercase; letter-spacing: .08em;
     color: var(--muted); margin: 0 0 10px; font-weight: 700;
   }
+  dl.summary-list { display: grid; grid-template-columns: minmax(84px, 30%) 1fr; gap: 9px 12px; margin: 0; font-size: .87rem; }
+  dl.summary-list dt { color: var(--muted); }
+  dl.summary-list dd { margin: 0; overflow-wrap: anywhere; }
+  .tag-mini { background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 2px 9px; font-size: .74rem; margin: 0 5px 4px 0; display: inline-block; }
+
   .raw-json {
     font-family: var(--mono); font-size: .74rem; line-height: 1.65;
     background: var(--card-raised); border: 1px solid var(--line); border-radius: 10px;
-    padding: 12px; max-height: 320px; overflow: auto; white-space: pre; color: var(--ink);
+    padding: 12px; max-height: 320px; overflow: auto; white-space: pre-wrap; word-break: break-word; color: var(--ink);
   }
   .raw-json .k { color: var(--accent); }
   .raw-json .s { color: var(--warn); }
@@ -224,7 +237,7 @@
 
   .dup-item {
     display: flex; justify-content: space-between; gap: 8px; align-items: center;
-    padding: 8px 0; border-top: 1px solid var(--line); font-size: .82rem;
+    padding: 8px 0; border-top: 1px solid var(--line); font-size: .82rem; flex-wrap: wrap;
   }
   .dup-item:first-of-type { border-top: none; padding-top: 0; }
   .dup-name { font-weight: 600; }
@@ -238,36 +251,40 @@
     border-radius: 8px; padding: 8px 10px; margin-top: 8px;
   }
 
+  /* ---------- success screen ---------- */
+  .success-card { text-align: center; padding: 36px 18px; }
+  .success-card .emoji { font-size: 2.2rem; margin: 0 0 10px; }
+  .success-card h2 { margin: 0 0 8px; }
+  .success-card .hint { margin: 0 0 20px; }
+
   /* ---------- action bar ---------- */
   .action-bar {
     position: sticky; bottom: 0; margin-top: 4px;
     background: var(--card); border: 1px solid var(--line); border-radius: 14px;
-    padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap;
+    padding: 14px 16px; padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
   }
   .action-bar .status { font-size: .78rem; color: var(--muted); }
-  .action-bar .buttons { display: flex; gap: 10px; }
+  .action-bar .buttons { display: flex; gap: 10px; flex-wrap: wrap; width: 100%; }
   button.primary {
     background: var(--accent); color: var(--card); border: none;
-    border-radius: 9px; padding: 11px 20px; font-size: .88rem; font-weight: 700; cursor: pointer;
+    border-radius: 9px; padding: 12px 20px; font-size: .9rem; font-weight: 700; cursor: pointer;
+    flex: 1 1 auto;
   }
   button.secondary {
     background: none; color: var(--muted); border: 1px solid var(--line);
-    border-radius: 9px; padding: 11px 16px; font-size: .88rem; font-weight: 600; cursor: pointer;
+    border-radius: 9px; padding: 12px 16px; font-size: .9rem; font-weight: 600; cursor: pointer;
+    flex: 1 1 auto;
+  }
+  @media (min-width: 480px) {
+    .action-bar .buttons { width: auto; }
+    button.primary, button.secondary { flex: none; }
   }
 
   .foot-note {
-    font-size: .74rem; color: var(--muted); text-align: center; margin-top: 26px;
+    font-size: .74rem; color: var(--muted); text-align: center; margin-top: 22px;
   }
   .foot-note code { font-family: var(--mono); background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; }
-
-  /* ---------- rate limit chip ---------- */
-  .rate-chip {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-family: var(--mono); font-size: .72rem; color: var(--muted);
-    border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px;
-    margin-left: 10px;
-  }
-  .rate-chip .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
 
   /* ---------- auth gate ---------- */
   .gate-overlay {
@@ -275,15 +292,16 @@
     background: color-mix(in srgb, var(--paper) 88%, transparent);
     backdrop-filter: blur(3px);
     display: flex; align-items: center; justify-content: center; padding: 20px;
+    overflow-y: auto;
   }
   .gate-card {
     width: 100%; max-width: 380px;
     background: var(--card); border: 1px solid var(--line); border-radius: 16px;
-    padding: 28px 26px 24px; box-shadow: 0 20px 50px rgba(15, 31, 28, .18);
+    padding: 26px 22px 22px; box-shadow: 0 20px 50px rgba(15, 31, 28, .18);
   }
   .gate-card .eyebrow { margin-bottom: 10px; }
-  .gate-card h2 { font-size: 1.15rem; margin: 0 0 6px; text-wrap: balance; }
-  .gate-card .sub { color: var(--muted); font-size: .82rem; margin: 0 0 20px; }
+  .gate-card h2 { font-size: 1.1rem; margin: 0 0 6px; text-wrap: balance; }
+  .gate-card .sub { color: var(--muted); font-size: .82rem; margin: 0 0 18px; }
   .gate-card .field { margin-bottom: 14px; }
   .gate-card button.primary { width: 100%; margin-top: 4px; }
   .gate-note {
@@ -293,6 +311,13 @@
   .gate-note strong { color: var(--accent); }
   body.gate-open { overflow: hidden; }
   body:not(.gate-open) .gate-overlay { display: none; }
+
+  @media (max-width: 480px) {
+    section.card, .rail-card { border-radius: 12px; }
+    dl.summary-list { grid-template-columns: 1fr; }
+    dl.summary-list dt { padding-top: 6px; border-top: 1px solid var(--line); }
+    dl.summary-list dt:first-child { padding-top: 0; border-top: none; }
+  }
 </style>
 
 <div class="gate-overlay" id="gate">
@@ -320,18 +345,18 @@
       <h1>団体情報 新規登録</h1>
       <p class="sub">入力内容はそのまま生データ層に保存されます。正規化・地図への反映は別工程です。</p>
     </div>
-    <div>
+    <div class="topbar-controls">
       <div class="source-picker" role="group" aria-label="登録元">
         <button class="source-chip active" type="button" data-org="kagayaki">輝き</button>
         <button class="source-chip" type="button" data-org="fvac">FVAC</button>
         <button class="source-chip" type="button" data-org="kominkan">公民館</button>
         <button class="source-chip" type="button" data-org="shakyoiku">社会教育</button>
       </div>
-      <span class="rate-chip"><span class="dot"></span>入力者: <span id="rate-name">田中</span>・本日の登録 3件（目安20件、超過時は自動フラグ）</span>
+      <span class="rate-chip"><span class="dot"></span><span>入力者: <span id="rate-name">田中</span>・本日3件（上限目安20）</span></span>
     </div>
   </div>
 
-  <div class="workbench">
+  <div class="form-view" id="form-view">
     <div class="form-col">
 
       <section class="card">
@@ -388,15 +413,15 @@
         <div class="field-row">
           <div class="field">
             <label>代表者名<span class="optional">任意</span></label>
-            <input type="text" value="—" />
+            <input type="text" id="f-rep" value="—" />
           </div>
           <div class="field">
             <label>電話<span class="optional">任意</span></label>
-            <input type="text" value="—" />
+            <input type="text" id="f-tel" value="—" />
           </div>
           <div class="field">
             <label>メール<span class="optional">任意</span></label>
-            <input type="text" value="—" />
+            <input type="text" id="f-mail" value="—" />
           </div>
         </div>
         <div class="field" style="max-width:280px">
@@ -413,7 +438,7 @@
         <h2><span class="step-no">4</span> 活動場所</h2>
         <div class="field">
           <label>施設名で検索</label>
-          <input type="text" value="さくら" />
+          <input type="text" id="f-facility-search" value="さくら" />
         </div>
         <div class="facility-suggest">
           <button type="button">さくら会館 <span class="tag">facility #12・座標確認済み</span></button>
@@ -425,7 +450,7 @@
         </p>
         <div class="field">
           <label>住所<span class="optional">施設が見つからない・新規登録する場合のみ</span></label>
-          <input type="text" placeholder="福生市〇〇 1-2-3" />
+          <input type="text" id="f-address" placeholder="福生市〇〇 1-2-3" />
         </div>
       </section>
 
@@ -435,7 +460,7 @@
         <div class="field-row">
           <div class="field narrow">
             <label>週パターン</label>
-            <select>
+            <select id="f-weekpattern">
               <option>毎週</option>
               <option>第1</option>
               <option>第1,3</option>
@@ -469,14 +494,35 @@
 
       <section class="card">
         <h2><span class="step-no">6</span> 備考</h2>
-        <textarea placeholder="入力者名、確認できなかった項目、次回フォロー事項など"></textarea>
+        <textarea id="f-note" placeholder="入力者名、確認できなかった項目、次回フォロー事項など"></textarea>
       </section>
 
     </div>
 
-    <div class="rail">
-      <div class="rail-card">
-        <h3>重複候補</h3>
+    <div class="action-bar">
+      <span class="status">未保存の変更があります</span>
+      <div class="buttons">
+        <button class="secondary" type="button">キャンセル</button>
+        <button class="primary" type="button" id="btn-review">内容を確認する →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="confirm-view" id="confirm-view" hidden>
+    <button class="back-link" type="button" id="btn-back-top">← 戻って修正する</button>
+    <div>
+      <h2>この内容で保存します</h2>
+      <p class="hint">保存後の修正はレビュー画面からの差し戻しが必要です。内容を確認してください。</p>
+    </div>
+
+    <div class="rail-card">
+      <h3>入力内容</h3>
+      <dl class="summary-list" id="summary-list"></dl>
+    </div>
+
+    <div class="rail-card">
+      <h3>重複候補</h3>
+      <div id="dup-list">
         <div class="dup-item">
           <div>
             <div class="dup-name">さくら音訳会</div>
@@ -491,22 +537,31 @@
           </div>
           <span class="dup-badge">公民館(本館)</span>
         </div>
-        <p class="dup-caution">名称が近い団体が2件あります。統合は本人からの申告があるまで行わないでください。</p>
       </div>
+      <p class="dup-caution">名称が近い団体が2件あります。統合は本人からの申告があるまで行わないでください。</p>
+    </div>
 
-      <div class="rail-card">
-        <h3>raw_fields プレビュー</h3>
-        <div class="raw-json" id="json-preview">保存内容を表示</div>
-        <p class="rail-note">この内容がそのまま <code style="font-family:inherit">raw_circle_submissions.raw_fields</code> にJSON文字列として保存されます。</p>
+    <div class="rail-card">
+      <h3>raw_fields プレビュー</h3>
+      <div class="raw-json" id="json-preview">保存内容を表示</div>
+      <p class="rail-note">この内容がそのまま <code style="font-family:inherit">raw_circle_submissions.raw_fields</code> にJSON文字列として保存されます。</p>
+    </div>
+
+    <div class="action-bar">
+      <span class="status">保存前の最終確認です</span>
+      <div class="buttons">
+        <button class="secondary" type="button" id="btn-back-bottom">← 戻る</button>
+        <button class="primary" type="button" id="btn-final-save">この内容で保存する</button>
       </div>
     </div>
   </div>
 
-  <div class="action-bar">
-    <span class="status">未保存の変更があります</span>
-    <div class="buttons">
-      <button class="secondary" type="button">キャンセル</button>
-      <button class="primary" type="button">生データとして保存</button>
+  <div class="success-view" id="success-view" hidden>
+    <div class="rail-card success-card">
+      <p class="emoji">✅</p>
+      <h2>保存しました</h2>
+      <p class="hint">raw_circle_submissions に1件追加されました（モックアップのため実際の保存は行われません）。</p>
+      <button class="primary" type="button" id="btn-new-entry">続けて登録する</button>
     </div>
   </div>
 
@@ -550,7 +605,7 @@
       field.insertAdjacentElement('afterend', p);
     }
     field.querySelectorAll('.chip').forEach(function (el) {
-      el.addEventListener('click', function () { el.classList.toggle('on'); renderPreview(); });
+      el.addEventListener('click', function () { el.classList.toggle('on'); });
     });
   }
 
@@ -559,16 +614,14 @@
       document.querySelectorAll('.source-chip').forEach(function (s) { s.classList.remove('active'); });
       el.classList.add('active');
       renderCategoryChips(el.dataset.org);
-      renderPreview();
     });
   });
 
   document.querySelectorAll('.weekday').forEach(function (el) {
-    el.addEventListener('click', function () { el.classList.toggle('on'); renderPreview(); });
+    el.addEventListener('click', function () { el.classList.toggle('on'); });
   });
 
   document.getElementById('cat-other-field').style.display = 'block';
-  document.getElementById('cat-other-text').addEventListener('input', renderPreview);
 
   document.getElementById('new-facility-btn').addEventListener('click', function () {
     document.getElementById('new-facility-hint').style.display = 'block';
@@ -581,33 +634,79 @@
   });
   document.body.classList.add('gate-open');
 
-  function renderPreview() {
+  function collectData() {
     var cats = Array.from(document.querySelectorAll('#cat-field .chip.on')).map(function (c) { return c.textContent; });
     var catOther = document.getElementById('cat-other-text').value;
     if (catOther) cats.push(catOther + '（自由記述）');
     var days = Array.from(document.querySelectorAll('.weekday.on')).map(function (d) { return d.textContent; });
-    var data = {
+    return {
       organization_type: document.querySelector('.source-chip.active').dataset.org,
+      organization_label: document.querySelector('.source-chip.active').textContent,
       source_no: document.getElementById('f-sourceno').value,
       name: document.getElementById('f-name').value,
       description: document.getElementById('f-desc').value,
       fee: document.getElementById('f-fee').value,
       join_condition: document.getElementById('f-join').value,
       categories: cats,
+      representative: document.getElementById('f-rep').value,
+      tel: document.getElementById('f-tel').value,
+      mail: document.getElementById('f-mail').value,
       contact_disclosure_status: "undisclosed",
+      facility: document.getElementById('f-facility-search').value,
+      address: document.getElementById('f-address').value,
+      schedule_week_pattern: document.getElementById('f-weekpattern').value,
       schedule_raw_text: document.querySelector('.raw-text').value,
       schedule_days: days,
+      note: document.getElementById('f-note').value,
       submitted_by: document.getElementById('gate-name').value || null
     };
+  }
+
+  function renderSummary(data) {
+    var rows = [
+      ['登録元', data.organization_label],
+      ['団体名', data.name],
+      ['活動内容', data.description],
+      ['カテゴリ', data.categories.length ? data.categories.map(function (c) { return '<span class="tag-mini">' + c + '</span>'; }).join('') : '（なし）'],
+      ['会費 / 入会条件', (data.fee || '—') + ' / ' + (data.join_condition || '—')],
+      ['活動場所', data.facility + (data.address ? '（' + data.address + '）' : '')],
+      ['活動日時', data.schedule_raw_text],
+      ['連絡先公開状況', '未確認（undisclosed）'],
+      ['入力者', data.submitted_by || '未入力']
+    ];
+    document.getElementById('summary-list').innerHTML = rows.map(function (r) {
+      return '<dt>' + r[0] + '</dt><dd>' + r[1] + '</dd>';
+    }).join('');
+  }
+
+  function renderJson(data) {
     var json = JSON.stringify(data, null, 2)
       .replace(/"([a-zA-Z_]+)":/g, '<span class="k">"$1"</span>:')
       .replace(/: "([^"]*)"/g, ': <span class="s">"$1"</span>');
     document.getElementById('json-preview').innerHTML = json;
   }
 
-  renderCategoryChips('kagayaki');
-  document.querySelectorAll('input, textarea, select').forEach(function (el) {
-    el.addEventListener('input', renderPreview);
+  function showView(name) {
+    document.getElementById('form-view').hidden = name !== 'form';
+    document.getElementById('confirm-view').hidden = name !== 'confirm';
+    document.getElementById('success-view').hidden = name !== 'success';
+    window.scrollTo(0, 0);
+  }
+
+  document.getElementById('btn-review').addEventListener('click', function () {
+    var data = collectData();
+    renderSummary(data);
+    renderJson(data);
+    showView('confirm');
   });
-  renderPreview();
+  document.getElementById('btn-back-top').addEventListener('click', function () { showView('form'); });
+  document.getElementById('btn-back-bottom').addEventListener('click', function () { showView('form'); });
+  document.getElementById('btn-final-save').addEventListener('click', function () { showView('success'); });
+  document.getElementById('btn-new-entry').addEventListener('click', function () { showView('form'); });
+
+  renderCategoryChips('kagayaki');
+  showView('form');
 </script>
+
+</body>
+</html>

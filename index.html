@@ -24,6 +24,18 @@
     </div>
   </header>
 
+  <main>
+    <section class="legend" aria-label="地図の凡例">
+      <span><i class="legend-dot verified"></i>位置確認済み</span>
+      <span><i class="legend-dot unverified"></i>概算・未確認</span>
+      <span id="data-summary">データ読込中…</span>
+    </section>
+    <div id="map" role="application" aria-label="福生市人材資源マップ"></div>
+    <div id="load-error" class="error-panel" hidden>
+      データを読み込めませんでした。時間をおいて再度お試しください。
+    </div>
+  </main>
+
   <section class="proposal-banner">
     <p class="proposal-tag">提案 — 輝き市民サポートセンターとの連携イメージ</p>
     <h2>登録団体のプチHPを、この地図の仕組みにそのまま乗せられます</h2>
@@ -36,7 +48,7 @@
       <div class="proposal-card">
         <span class="proposal-num">2</span>
         <p class="proposal-card-title">団体ごとのプチHP</p>
-        <p class="proposal-card-body">ピンをタップすると、団体紹介・活動内容がその場でポップアップ表示されます（右上の地図で体験できます）。</p>
+        <p class="proposal-card-body">ピンをタップすると、団体紹介・活動内容がその場でポップアップ表示されます（上の地図で体験できます）。</p>
       </div>
       <div class="proposal-card">
         <span class="proposal-num">3</span>
@@ -51,18 +63,6 @@
       </div>
     </div>
   </section>
-
-  <main>
-    <section class="legend" aria-label="地図の凡例">
-      <span><i class="legend-dot verified"></i>位置確認済み</span>
-      <span><i class="legend-dot unverified"></i>概算・未確認</span>
-      <span id="data-summary">データ読込中…</span>
-    </section>
-    <div id="map" role="application" aria-label="福生市人材資源マップ"></div>
-    <div id="load-error" class="error-panel" hidden>
-      データを読み込めませんでした。時間をおいて再度お試しください。
-    </div>
-  </main>
 
   <footer>
     <p>位置情報が概算・未確認の団体があります。訪問前に公式情報をご確認ください。</p>
