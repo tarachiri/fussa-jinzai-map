@@ -201,6 +201,16 @@ footer a { color: #fff; }
   margin: 0;
 }
 
+.proposal-card-link {
+  color: #7fd9b8;
+  display: inline-block;
+  font-size: .82rem;
+  font-weight: 700;
+  margin-top: 10px;
+  text-decoration: none;
+}
+.proposal-card-link:hover { text-decoration: underline; }
+
 @media (max-width: 640px) {
   .proposal-banner { padding-block: 22px 26px; }
   .proposal-banner h2 { margin-bottom: 16px; }
